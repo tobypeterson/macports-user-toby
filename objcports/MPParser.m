@@ -14,6 +14,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 {
 	self = [super init];
 	_interp = Tcl_CreateInterp();
+	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
+	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
 
 	// XXX: should probably remove even more functionality
 	//Tcl_MakeSafe(_interp);
@@ -47,8 +49,25 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 - (void)dealloc
 {
+	[_variants release];
+	[_platforms release];
 	Tcl_DeleteInterp(_interp);
 	[super dealloc];
+}
+
+- (NSString *)option:(NSString *)option
+{
+	return [NSString stringWithUTF8String:Tcl_GetVar(_interp, [option UTF8String], 0)];
+}
+
+- (NSArray *)variants
+{
+	return [_variants allKeys];
+}
+
+- (NSArray *)platforms
+{
+	return _platforms;
 }
 
 - (void)performCommand:(NSString *)command arguments:(NSArray *)args
@@ -83,6 +102,7 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 			arch ? [NSString stringWithFormat:@"_%@", arch] : @""];
 
 		// XXX: dupe check
+		[_platforms addObject:platformFull];
 		// XXX: check match, right now pretend all platforms are true
 		if (YES) {
 			NSLog(@"eval'ing target %@", platformFull);
@@ -102,6 +122,7 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 		// XXX: actually pull in its properties.. need to provide externally
 		// also check for dupes (w/ platforms too)
+		[_variants setObject:[NSDictionary dictionary] forKey:name];
 
 		// XXX: make sure it's set, like platforms just pretend
 		if (YES) {
