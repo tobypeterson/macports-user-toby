@@ -57,7 +57,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 - (NSString *)option:(NSString *)option
 {
-	return [NSString stringWithUTF8String:Tcl_GetVar(_interp, [option UTF8String], 0)];
+	const char *val = Tcl_GetVar(_interp, [option UTF8String], 0);
+	return val ? [NSString stringWithUTF8String:val] : nil;
 }
 
 - (NSArray *)variants
