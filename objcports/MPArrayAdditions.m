@@ -11,7 +11,7 @@
 	return [[[self alloc] initWithTclObjects:objects count:count] autorelease];
 }
 
-- (id)initWithTclObjects:(Tcl_Obj * const *)objects count:(int)count;
+- (id)initWithTclObjects:(Tcl_Obj * const *)objects count:(int)count
 {
 	int i;
 	NSString *array[count];
