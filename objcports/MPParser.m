@@ -2,15 +2,17 @@
 #include <tcl.h>
 
 #include "MPParser.h"
+#include "MPPort.h"
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
 
 static int _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+static char *_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static void info(Tcl_Interp *interp, const char *command); // debugging
 
 @implementation MPParser
 
-- (id)initWithPortfile:(NSString *)portfile
+- (id)initWithPort:(MPPort *)port
 {
 	self = [super init];
 	_interp = Tcl_CreateInterp();
@@ -23,13 +25,14 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	@try {
 		Tcl_Preserve(_interp);
 
-		// XXX: need to do all setup here
-		Tcl_SetVar(_interp, "prefix", "/opt/local", 0);
-		Tcl_SetVar(_interp, "worksrcpath", "/tmp/", 0);
+		/* Handle defaults (ask parent port instance). */
+		for (NSString *def in [port defaults]) {
+			Tcl_TraceVar(_interp, [def UTF8String], TCL_TRACE_READS, _default, port);
+		}
 
 		Tcl_CreateObjCommand(_interp, "unknown", _unknown, self, NULL);
-		if (Tcl_EvalFile(_interp, [portfile UTF8String]) != TCL_OK) {
-			NSLog(@"Tcl_EvalFile(%@): %s", portfile, Tcl_GetStringResult(_interp));
+		if (Tcl_EvalFile(_interp, [[port portfile] UTF8String]) != TCL_OK) {
+			NSLog(@"Tcl_EvalFile(%@): %s", [port portfile], Tcl_GetStringResult(_interp));
 		}
 
 		Tcl_Release(_interp);
@@ -78,6 +81,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		assert([[args objectAtIndex:0] isEqualToString:@"1.0"]);
 	} else if ([command isEqualToString:@"PortGroup"]) {
 		NSLog(@"ignoring %@, grps r hard m'kay", command);
+		// XXX: this should probably set some state in parent port instance
+		// (ugh, more tcl parsing)
 	} else if ([command isEqualToString:@"platform"]) {
 		NSUInteger count = [args count];
 		NSString *os, *arch;
@@ -206,6 +211,15 @@ _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const obj
 	[args release];
 
 	return TCL_OK;
+}
+
+static char *
+_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
+{
+	assert(flags == TCL_TRACE_READS);
+	assert(name2 == NULL);
+	Tcl_SetVar(interp, name1, [[(id)clientData default:[NSString stringWithUTF8String:name1]] UTF8String], 0);
+	return NULL;
 }
 
 // debugging

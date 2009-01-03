@@ -1,3 +1,5 @@
+@class MPPort;
+
 @interface MPParser : NSObject
 {
 	Tcl_Interp *_interp;
@@ -15,7 +17,7 @@
 	NSMutableArray *_platforms; // just a list, for dupe checking
 }
 
-- (id)initWithPortfile:(NSString *)portfile;
+- (id)initWithPort:(MPPort *)port;
 
 - (NSString *)option:(NSString *)option;
 - (NSArray *)variants;
