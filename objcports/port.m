@@ -8,6 +8,9 @@ main(int argc, char *argv[])
 {
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
+	if (argc != 2)
+		exit(1);
+
 	MPPort *port = [[MPPort alloc] initWithPortfile:[NSString stringWithUTF8String:argv[1]] options:nil];
 	NSLog(@"%@ @%@ (%@)", [port option:@"name"], [port option:@"version"], [port option:@"categories"]);
 	NSLog(@"Variants:     %@", [[port variants] componentsJoinedByString:@", "]);

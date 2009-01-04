@@ -44,7 +44,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	}
 	@finally {
 		info(_interp, "[info globals]");
-		//info(_interp, "[info commands]");
+		info(_interp, "[info commands]");
+		NSLog(@"%@", _variants);
 	}
 
 	return self;
@@ -111,12 +112,14 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		[_platforms addObject:platformFull];
 		// XXX: check match, right now pretend all platforms are true
 		if (YES) {
-			NSLog(@"eval'ing target %@", platformFull);
+			NSLog(@"+%@", platformFull);
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([command isEqualToString:@"variant"]) {
 		NSUInteger count = [args count];
 		NSString *name;
+		NSMutableDictionary *props;
+		int i;
 
 		// variant name [a b c d] {}
 		if (count < 2 || count % 2) {
@@ -126,13 +129,17 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 		name = [args objectAtIndex:0];
 
-		// XXX: actually pull in its properties.. need to provide externally
-		// also check for dupes (w/ platforms too)
-		[_variants setObject:[NSDictionary dictionary] forKey:name];
+		props = [NSMutableDictionary dictionaryWithCapacity:count-2];
+ 		for (i = 1; i < count - 1; i += 2) {
+			[props setObject:[args objectAtIndex:i+1] forKey:[args objectAtIndex:i]];
+		}
+
+		// XXX: check for dupes (w/ platforms too)
+		[_variants setObject:props forKey:name];
 
 		// XXX: make sure it's set, like platforms just pretend
 		if (YES) {
-			NSLog(@"eval'ing variant %@", name);
+			NSLog(@"+%@", name);
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	//} else if ([_targets containsObject:command]) {
@@ -232,5 +239,5 @@ info(Tcl_Interp *interp, const char *command)
 
 	Tcl_ExprObj(interp, Tcl_NewStringObj(command, -1), &result);
 	Tcl_ListObjGetElements(interp, result, &objc, &objv);
-	NSLog(@"%@", [NSArray arrayWithTclObjects:objv count:objc]);
+	//NSLog(@"%@", [NSArray arrayWithTclObjects:objv count:objc]);
 }

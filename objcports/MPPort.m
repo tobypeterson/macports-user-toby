@@ -34,7 +34,7 @@
 - (NSString *)default:(NSString *)def
 {
 	// XXX: selector (NSInvocation?) or constant NSString...
-	NSLog(@"requesting default value of '%@'", def);
+	NSLog(@"default: '%@'", def);
 	return def;
 }
 
