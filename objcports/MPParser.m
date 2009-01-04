@@ -6,8 +6,7 @@
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
 
-static int _target(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
-static int _option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static int _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static char *_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static void info(Tcl_Interp *interp, const char *command); // debugging
@@ -34,6 +33,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 			Tcl_TraceVar(_interp, [def UTF8String], TCL_TRACE_READS, _default, port);
 		}
 
+		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL);
+
 		/* Handle *all* commands via the "unknown" mechanism. */
 		Tcl_CreateObjCommand(_interp, "unknown", _unknown, self, NULL);
 
@@ -41,6 +42,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		if (Tcl_EvalFile(_interp, [portfile UTF8String]) != TCL_OK) {
 			NSLog(@"Tcl_EvalFile(%@): %s", portfile, Tcl_GetStringResult(_interp));
 		}
+
+		//fprintf(stderr, "%s\n", Tcl_GetString(Tcl_SubstObj(_interp, Tcl_NewStringObj("$prefix/${extract.suffix}", -1), TCL_SUBST_ALL)));
 
 		Tcl_Release(_interp);
 	}
@@ -94,8 +97,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		// (ugh, more tcl parsing)
 	} else if ([command isEqualToString:@"platform"]) {
 		NSUInteger count = [args count];
-		NSString *os, *arch;
-		NSInteger release;
+		NSString *os, *arch = nil;
+		NSInteger release = 0;
 
 		if (count < 2 || count > 4) {
 			NSLog(@"bogus platform declaration");
@@ -148,6 +151,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		if (YES) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
+	} else if ([[_port procs] containsObject:command]) {
+		// callback somewhere...
 	} else if ([_port isTarget:command]) {
 		// XXX: store for later use...
 	} else {
@@ -213,21 +218,10 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 @end
 
-static int
-_target(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
-	NSLog(@"_target %@", args);
-	[args release];
-
-	return TCL_OK;
-}
-
-static int
-_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
-{
-	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
-	NSLog(@"_option %@", args);
+	NSArray *args = [[NSArray alloc] initWithTclObjects:++objv count:--objc];
+	NSLog(@"%@", [args componentsJoinedByString:@" "]);
 	[args release];
 
 	return TCL_OK;
