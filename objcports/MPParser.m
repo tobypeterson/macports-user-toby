@@ -6,6 +6,8 @@
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
 
+static int _target(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+static int _option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static int _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static char *_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static void info(Tcl_Interp *interp, const char *command); // debugging
@@ -15,24 +17,29 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 - (id)initWithPort:(MPPort *)port
 {
 	self = [super init];
+	_port = [port retain];
 	_interp = Tcl_CreateInterp();
 	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
 	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
 
 	// XXX: should probably remove even more functionality
-	//Tcl_MakeSafe(_interp);
+	Tcl_MakeSafe(_interp);
 
 	@try {
 		Tcl_Preserve(_interp);
 
-		/* Handle defaults (ask parent port instance). */
-		for (NSString *def in [port defaults]) {
+		/* Handle defaults. Ports shouldn't expect any other variables to be set,
+		 * so we can just set them as we go. */
+		for (NSString *def in [_port defaults]) {
 			Tcl_TraceVar(_interp, [def UTF8String], TCL_TRACE_READS, _default, port);
 		}
 
+		/* Handle *all* commands via the "unknown" mechanism. */
 		Tcl_CreateObjCommand(_interp, "unknown", _unknown, self, NULL);
-		if (Tcl_EvalFile(_interp, [[port portfile] UTF8String]) != TCL_OK) {
-			NSLog(@"Tcl_EvalFile(%@): %s", [port portfile], Tcl_GetStringResult(_interp));
+
+		NSString *portfile = [_port portfile];
+		if (Tcl_EvalFile(_interp, [portfile UTF8String]) != TCL_OK) {
+			NSLog(@"Tcl_EvalFile(%@): %s", portfile, Tcl_GetStringResult(_interp));
 		}
 
 		Tcl_Release(_interp);
@@ -45,7 +52,7 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	@finally {
 		info(_interp, "[info globals]");
 		info(_interp, "[info commands]");
-		NSLog(@"%@", _variants);
+		//NSLog(@"%@", _variants);
 	}
 
 	return self;
@@ -56,6 +63,7 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	[_variants release];
 	[_platforms release];
 	Tcl_DeleteInterp(_interp);
+	[_port release];
 	[super dealloc];
 }
 
@@ -112,7 +120,6 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		[_platforms addObject:platformFull];
 		// XXX: check match, right now pretend all platforms are true
 		if (YES) {
-			NSLog(@"+%@", platformFull);
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([command isEqualToString:@"variant"]) {
@@ -139,11 +146,10 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 		// XXX: make sure it's set, like platforms just pretend
 		if (YES) {
-			NSLog(@"+%@", name);
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
-	//} else if ([_targets containsObject:command]) {
-		// XXX: right now we just treat target-related things like options
+	} else if ([_port isTarget:command]) {
+		// XXX: store for later use...
 	} else {
 		NSString *option;
 		enum { OPTION_SET, OPTION_APPEND, OPTION_DELETE } action;
@@ -158,54 +164,74 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 			action = OPTION_SET;
 		}
 
-		//if ([_options containsObject:option]) {
-			// XXX: also need to ignore if overriden on command line
-			switch (action) {
-			case OPTION_SET:
-				Tcl_SetVar(_interp, [option UTF8String], [[args componentsJoinedByString:@" "] UTF8String], 0);
-				break;
-			case OPTION_APPEND: {
-				Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
-				int length;
-				if (val == NULL) {
-					val = Tcl_NewListObj(0, NULL);
-					Tcl_SetVar2Ex(_interp, [option UTF8String], NULL, val, 0);
-				}
-				Tcl_ListObjLength(_interp, val, &length);
-				for (NSString *arg in args) {
-					Tcl_Obj *str = Tcl_NewStringObj([arg UTF8String], -1);
-					Tcl_ListObjReplace(_interp, val, length++, 0, 1, &str);
-				}
-				break;
+		if (![[_port options] containsObject:option]) {
+			NSLog(@"? %@", option);
+		}
+
+		// XXX: also need to skip if overridden on command line
+		switch (action) {
+		case OPTION_SET:
+			Tcl_SetVar(_interp, [option UTF8String], [[args componentsJoinedByString:@" "] UTF8String], 0);
+			break;
+		case OPTION_APPEND: {
+			Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
+			int length;
+			if (val == NULL) {
+				val = Tcl_NewListObj(0, NULL);
+				Tcl_SetVar2Ex(_interp, [option UTF8String], NULL, val, 0);
 			}
-			case OPTION_DELETE: {
-				Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
-				int objc;
-				Tcl_Obj **objv;
-				for (NSString *arg in args) {
-					int i;
-					Tcl_ListObjGetElements(_interp, val, &objc, &objv);
-					for (i = 0; i < objc; i++) {
-						if ([arg isEqualToString:[NSString stringWithTclObject:objv[i]]]) {
-							Tcl_ListObjReplace(_interp, val, i, 1, 0, NULL);
-							break; // just want to delete one occurrence
-						}
+			Tcl_ListObjLength(_interp, val, &length);
+			for (NSString *arg in args) {
+				Tcl_Obj *str = Tcl_NewStringObj([arg UTF8String], -1);
+				Tcl_ListObjReplace(_interp, val, length++, 0, 1, &str);
+			}
+			break;
+		}
+		case OPTION_DELETE: {
+			Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
+			int objc;
+			Tcl_Obj **objv;
+			for (NSString *arg in args) {
+				int i;
+				Tcl_ListObjGetElements(_interp, val, &objc, &objv);
+				for (i = 0; i < objc; i++) {
+					if ([arg isEqualToString:[NSString stringWithTclObject:objv[i]]]) {
+						Tcl_ListObjReplace(_interp, val, i, 1, 0, NULL);
+						break; // just want to delete one occurrence
 					}
 				}
-				// XXX: unset if empty
-				break;
 			}
-			default:
-				abort();
-				break;
-			}
-		//} else {
-		//	NSLog(@"unknown option %@", option);
-		//}
+			// XXX: unset if empty
+			break;
+		}
+		default:
+			abort();
+			break;
+		}
 	}
 }
 
 @end
+
+static int
+_target(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
+	NSLog(@"_target %@", args);
+	[args release];
+
+	return TCL_OK;
+}
+
+static int
+_option(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
+	NSLog(@"_option %@", args);
+	[args release];
+
+	return TCL_OK;
+}
 
 static int
 _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
