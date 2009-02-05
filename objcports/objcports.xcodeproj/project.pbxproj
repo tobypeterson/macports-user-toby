@@ -30,7 +30,7 @@
 
 /* Begin PBXFileReference section */
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		8DD76FA10486AA7600D96B5E /* objcports */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = objcports; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DD76FA10486AA7600D96B5E /* port */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = port; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
 		DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPArrayAdditions.h; sourceTree = "<group>"; };
 		DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPArrayAdditions.m; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DD76FA10486AA7600D96B5E /* objcports */,
+				8DD76FA10486AA7600D96B5E /* port */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -125,7 +125,7 @@
 			name = port;
 			productInstallPath = "$(HOME)/bin";
 			productName = objcports;
-			productReference = 8DD76FA10486AA7600D96B5E /* objcports */;
+			productReference = 8DD76FA10486AA7600D96B5E /* port */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -171,7 +171,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = objcports;
+				PRODUCT_NAME = port;
 			};
 			name = Debug;
 		};

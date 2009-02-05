@@ -43,8 +43,6 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 			NSLog(@"Tcl_EvalFile(%@): %s", portfile, Tcl_GetStringResult(_interp));
 		}
 
-		//fprintf(stderr, "%s\n", Tcl_GetString(Tcl_SubstObj(_interp, Tcl_NewStringObj("$prefix/${extract.suffix}", -1), TCL_SUBST_ALL)));
-
 		Tcl_Release(_interp);
 	}
 	@catch (NSException *exception) {
@@ -244,8 +242,8 @@ static char *
 _default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
 	assert(flags == TCL_TRACE_READS);
-	assert(name2 == NULL);
-	Tcl_SetVar(interp, name1, [[(id)clientData default:[NSString stringWithUTF8String:name1]] UTF8String], 0);
+	/* Default values may contain references to other Tcl variables (or tcl command calls?), so perform the substitution. */
+	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([[(id)clientData default:[NSString stringWithUTF8String:name1]] UTF8String], -1), TCL_SUBST_ALL), 0);
 	return NULL;
 }
 
