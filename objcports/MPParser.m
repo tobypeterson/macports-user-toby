@@ -80,8 +80,9 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		// (ugh, more tcl parsing)
 	} else if ([command isEqualToString:@"platform"]) {
 		NSUInteger count = [args count];
-		NSString *os, *arch = nil;
-		NSInteger release = 0;
+		NSString *os = nil;
+		id release = [NSNull null];
+		id arch = [NSNull null];
 
 		if (count < 2 || count > 4) {
 			NSLog(@"bogus platform declaration");
@@ -89,20 +90,20 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		}
 
 		os = [args objectAtIndex:0];
+
 		if (count == 3) {
-			release = [[args objectAtIndex:1] integerValue];
-			arch = release ? nil : [args objectAtIndex:1];
+			NSInteger rel = [[args objectAtIndex:1] integerValue];
+			if (rel != 0) {
+				release = [NSNumber numberWithInteger:rel];
+			} else {
+				arch = [args objectAtIndex:1];
+			}
 		} else if (count == 4) {
-			release = [[args objectAtIndex:1] integerValue];
+			release = [NSNumber numberWithInteger:[[args objectAtIndex:1] integerValue]];
 			arch = [args objectAtIndex:2];
 		}
 
-		NSString *platformFull = [NSString stringWithFormat:@"%@%@%@",
-			os,
-			release ? [NSString stringWithFormat:@"_%ld", release] : @"",
-			arch ? [NSString stringWithFormat:@"_%@", arch] : @""];
-
-		if ([_port addPlatform:platformFull]) {
+		if ([_port addPlatform:[NSArray arrayWithObjects:os, release, arch, nil]]) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([command isEqualToString:@"variant"]) {
