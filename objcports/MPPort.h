@@ -5,8 +5,6 @@
 	NSString *_portfile;
 	MPParser *_parser;
 
-	NSMutableArray *_procs; 
-
 	NSMutableArray *_targets;
 
 	NSMutableArray *_commands;
@@ -18,8 +16,6 @@
 - (id)initWithPortfile:(NSString *)port options:(NSDictionary *)options;
 
 - (NSString *)portfile;
-
-- (NSArray *)procs;
 
 - (BOOL)isTarget:(NSString *)target;
 

@@ -11,10 +11,6 @@
 	self = [super init];
 	_portfile = [portfile retain];
 
-	_procs = [[NSMutableArray alloc] initWithCapacity:0];
-	[_procs addObject:@"variant_isset"];
-	[_procs addObject:@"strsed"];
-
 	_targets = [[NSMutableArray alloc] initWithCapacity:0];
 	[_targets addObject:@"fetch"];
 	[_targets addObject:@"extract"];
@@ -150,7 +146,6 @@
 	[_parser release];
 	[_portfile release];
 
-	[_procs release];
 	[_targets release];
 	[_commands release];
 	[_options release];
@@ -162,11 +157,6 @@
 - (NSString *)portfile
 {
 	return _portfile;
-}
-
-- (NSArray *)procs
-{
-	return _procs;
 }
 
 - (BOOL)isTarget:(NSString *)target

@@ -6,10 +6,11 @@
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
 
+static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
+static int unknown_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
-static int _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
-static char *_variable(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
-static void info(Tcl_Interp *interp, const char *command); // debugging
+static void _info(Tcl_Interp *interp, const char *command); // debugging
 
 @implementation MPParser
 
@@ -28,17 +29,17 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		Tcl_Preserve(_interp);
 
 		for (NSString *var in [_port variables]) {
-			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, _variable, port);
+			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, variable_read, port);
 		}
 
 		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL);
 
 		/* Handle *all* commands via the "unknown" mechanism. */
-		Tcl_CreateObjCommand(_interp, "unknown", _unknown, self, NULL);
+		Tcl_CreateObjCommand(_interp, "unknown", unknown_trampoline, self, NULL);
 
-		NSString *portfile = [_port portfile];
-		if (Tcl_EvalFile(_interp, [portfile UTF8String]) != TCL_OK) {
-			NSLog(@"Tcl_EvalFile(%@): %s", portfile, Tcl_GetStringResult(_interp));
+		const char *portfile = [[_port portfile] UTF8String];
+		if (Tcl_EvalFile(_interp, portfile) != TCL_OK) {
+			NSLog(@"Tcl_EvalFile(%s): %s", portfile, Tcl_GetStringResult(_interp));
 		}
 
 		Tcl_Release(_interp);
@@ -49,8 +50,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		self = nil;
 	}
 	@finally {
-		info(_interp, "[info globals]");
-		info(_interp, "[info commands]");
+		_info(_interp, "[info globals]");
+		_info(_interp, "[info commands]");
 		//NSLog(@"%@", _variants);
 	}
 
@@ -64,12 +65,6 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	Tcl_DeleteInterp(_interp);
 	[_port release];
 	[super dealloc];
-}
-
-- (NSString *)option:(NSString *)option
-{
-	const char *val = Tcl_GetVar(_interp, [option UTF8String], 0);
-	return val ? [NSString stringWithUTF8String:val] : nil;
 }
 
 - (NSArray *)variants
@@ -147,8 +142,6 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 		if (YES) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
-	} else if ([[_port procs] containsObject:command]) {
-		// callback somewhere...
 	} else if ([_port isTarget:command]) {
 		// XXX: store for later use...
 	} else {
@@ -164,17 +157,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 
 @end
 
-static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
-{
-	NSArray *args = [[NSArray alloc] initWithTclObjects:++objv count:--objc];
-	NSLog(@"%@", [args componentsJoinedByString:@" "]);
-	[args release];
-
-	return TCL_OK;
-}
-
 static int
-_unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+unknown_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
 	assert(objc >= 2);
 	assert(!strcmp(Tcl_GetString(objv[0]), "::unknown"));
@@ -187,15 +171,25 @@ _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const obj
 }
 
 static char *
-_variable(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
+variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
 	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([[(id)clientData variable:[NSString stringWithUTF8String:name1]] UTF8String], -1), TCL_SUBST_ALL), 0);
 	return NULL;
 }
 
 // debugging
+static int
+_nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+	NSArray *args = [[NSArray alloc] initWithTclObjects:++objv count:--objc];
+	NSLog(@"%@", [args componentsJoinedByString:@" "]);
+	[args release];
+
+	return TCL_OK;
+}
+
 static void
-info(Tcl_Interp *interp, const char *command)
+_info(Tcl_Interp *interp, const char *command)
 {
 	Tcl_Obj *result;
 	int objc;
