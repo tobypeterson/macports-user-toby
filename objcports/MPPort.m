@@ -1,5 +1,6 @@
 #include <Foundation/Foundation.h>
 #include <tcl.h>
+#include <sys/utsname.h>
 
 #include "MPPort.h"
 #include "MPParser.h"
@@ -214,11 +215,36 @@
 	[tmp release];
 }
 
-- (BOOL)addPlatform:(NSString *)platform
+- (BOOL)addPlatform:(NSArray *)platform
 {
-	// XXX: dupe check
+	struct utsname u;
+	NSString *os;
+	NSNumber *release;
+	NSString *arch;
+	id tmp;
+
 	[_platforms addObject:platform];
-	// XXX: check match, right now pretend all platforms are true
+
+	assert(uname(&u) == 0);
+	os = [[NSString stringWithUTF8String:u.sysname] lowercaseString];
+	release = [NSNumber numberWithInteger:[[NSString stringWithUTF8String:u.release] integerValue]];
+	arch = [NSString stringWithUTF8String:u.machine];
+
+	tmp = [platform objectAtIndex:0];
+	if (tmp != [NSNull null] && ![tmp isEqualToString:os]) {
+		return NO;
+	}
+
+	tmp = [platform objectAtIndex:1];
+	if (tmp != [NSNull null] && ![tmp isEqual:release]) {
+		return NO;
+	}
+
+	tmp = [platform objectAtIndex:2];
+	if (tmp != [NSNull null] && ![tmp isEqual:arch]) {
+		return NO;
+	}
+
 	return YES;
 }
 

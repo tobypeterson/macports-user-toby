@@ -27,7 +27,7 @@
 - (void)option:(NSString *)option append:(NSArray *)value;
 - (void)option:(NSString *)option delete:(NSArray *)value;
 
-- (BOOL)addPlatform:(NSString *)platform;
+- (BOOL)addPlatform:(NSArray *)platform;
 - (NSArray *)platforms;
 
 - (BOOL)addVariant:(NSString *)variant properties:(NSDictionary *)props;
