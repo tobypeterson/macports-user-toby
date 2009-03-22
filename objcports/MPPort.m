@@ -14,43 +14,7 @@
 	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
 	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
 
-	_targets = [[NSMutableArray alloc] initWithCapacity:0];
-	[_targets addObject:@"fetch"];
-	[_targets addObject:@"extract"];
-	[_targets addObject:@"patch"];
-	[_targets addObject:@"configure"];
-	[_targets addObject:@"build"];
-	[_targets addObject:@"destroot"];
-
-	_commands = [[NSMutableArray alloc] initWithCapacity:0];
-	[_commands addObject:@"cvs"]; // portfetch.tcl
-	[_commands addObject:@"svn"]; // portfetch.tcl
-	[_commands addObject:@"extract"]; // portextract.tcl
-	[_commands addObject:@"patch"]; // portpatch.tcl
-	[_commands addObject:@"configure"]; // portconfigure.tcl
-	[_commands addObject:@"autoreconf"]; // portconfigure.tcl
-	[_commands addObject:@"automake"]; // portconfigure.tcl
-	[_commands addObject:@"autoconf"]; // portconfigure.tcl
-	[_commands addObject:@"xmkmf"]; // portconfigure.tcl
-	[_commands addObject:@"build"]; // portbuild.tcl
-	[_commands addObject:@"parallel_build"]; // portbuild.tcl
-	[_commands addObject:@"test"]; // porttest.tcl
-	[_commands addObject:@"destroot"]; // portdestroot.tcl
-
 	_options = [[NSMutableDictionary alloc] initWithCapacity:0];
-
-	// essentially 'commands' from portutil.tcl
-	for (NSString *command in _commands) {
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"use_%@", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.dir", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.args", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.post_args", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.env", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.type", command]];
-		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.cmd", command]];
-	}
-
 	[_options setObject:@"/opt/local" forKey:@"prefix"]; // portmain.tcl
 	[_options setObject:@"" forKey:@"name"]; // portmain.tcl
 	[_options setObject:@"" forKey:@"version"]; // portmain.tcl
@@ -80,7 +44,6 @@
 	[_options setObject:@"" forKey:@"macosx_deployment_target"]; // portmain.tcl
 	[_options setObject:@"" forKey:@"universal_variant"]; // portmain.tcl
 	[_options setObject:@"" forKey:@"os.universal_supported"]; // portmain.tcl
-	
 	[_options setObject:@"" forKey:@"master_sites"]; // portfetch.tcl
 	[_options setObject:@"" forKey:@"patch_sites"]; // portfetch.tcl
 	[_options setObject:@".tar.gz" forKey:@"extract.suffix"]; // portfetch.tcl
@@ -132,12 +95,37 @@
 	[_options setObject:@"test" forKey:@"test.target"]; // porttest.tcl
 	[_options setObject:@"" forKey:@"configure.compiler"];
 
+	NSArray *commands = [NSArray arrayWithObjects:
+		@"cvs", // portfetch.tcl
+		@"svn", // portfetch.tcl
+		@"extract", // portextract.tcl
+		@"patch", // portpatch.tcl
+		@"configure", // portconfigure.tcl
+		@"autoreconf", // portconfigure.tcl
+		@"automake", // portconfigure.tcl
+		@"autoconf", // portconfigure.tcl
+		@"xmkmf", // portconfigure.tcl
+		@"build", // portbuild.tcl
+		@"parallel_build", // portbuild.tcl
+		@"test", // porttest.tcl
+		@"destroot", // portdestroot.tcl
+		nil];
+
+	// essentially 'commands' from portutil.tcl
+	for (NSString *command in commands) {
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"use_%@", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.dir", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.args", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.post_args", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.env", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.type", command]];
+		[_options setObject:@"" forKey:[NSString stringWithFormat:@"%@.cmd", command]];
+	}
+
 	_constants = [[NSMutableDictionary alloc] initWithCapacity:0];
 	[_constants setObject:@"XXX" forKey:@"worksrcpath"]; // portmain.tcl
 	[_constants setObject:@"XXX" forKey:@"destroot"];
-
-	// XXX: option_proc setup?
-	// options_export?
 
 	_parser = [[MPParser alloc] initWithPort:self];
 
@@ -149,8 +137,6 @@
 	[_parser release];
 	[_portfile release];
 
-	[_targets release];
-	[_commands release];
 	[_options release];
 	[_constants release];
 
@@ -167,7 +153,14 @@
 
 - (NSArray *)targets
 {
-	return _targets;
+	return [NSArray arrayWithObjects:
+		@"fetch",
+		@"extract",
+		@"patch",
+		@"configure",
+		@"build",
+		@"destroot",
+		nil];
 }
 
 - (BOOL)isTarget:(NSString *)target
@@ -178,7 +171,7 @@
 		target = [target substringWithRange:NSMakeRange(5, [target length] - 5)];
 	}
 
-	return [_targets containsObject:target];
+	return [[self targets] containsObject:target];
 }
 
 - (NSArray *)variables
@@ -203,28 +196,16 @@
 
 - (void)option:(NSString *)option set:(NSArray *)value
 {
-	if (![[_options allKeys] containsObject:option]) {
-		NSLog(@"? %@", option);
-		return;
-	}
 	[_options setObject:[value componentsJoinedByString:@" "] forKey:option];
 }
 
 - (void)option:(NSString *)option append:(NSArray *)value
 {
-	if (![[_options allKeys] containsObject:option]) {
-		NSLog(@"? %@", option);
-		return;
-	}
 	[_options setObject:[NSString stringWithFormat:@"%@ %@", [_options objectForKey:option], [value componentsJoinedByString:@" "]] forKey:option];
 }
 
 - (void)option:(NSString *)option delete:(NSArray *)value
 {
-	if (![[_options allKeys] containsObject:option]) {
-		NSLog(@"? %@", option);
-		return;
-	}
 	NSMutableArray *tmp = [[[_options objectForKey:option] componentsSeparatedByString:@" "] mutableCopy];
 	for (NSString *v in value) {
 		[tmp removeObject:v];

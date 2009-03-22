@@ -5,10 +5,6 @@
 	NSString *_portfile;
 	MPParser *_parser;
 
-	NSMutableArray *_targets;
-
-	NSMutableArray *_commands;
-
 	NSMutableDictionary *_options;
 	NSMutableDictionary *_constants;
 
