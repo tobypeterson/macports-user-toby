@@ -6,8 +6,9 @@
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
 
+static void command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData);
+
 static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
-static int unknown_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static void _info(Tcl_Interp *interp, const char *command); // debugging
@@ -28,14 +29,28 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 	@try {
 		Tcl_Preserve(_interp);
 
+		command_create(_interp, "PortSystem", self);
+		command_create(_interp, "PortGroup", self);
+		command_create(_interp, "platform", self);
+		command_create(_interp, "variant", self);
+
+		for (NSString *target in [_port targets]) {
+			command_create(_interp, [target UTF8String], self);
+			command_create(_interp, [[@"pre-" stringByAppendingString:target] UTF8String], self);
+			command_create(_interp, [[@"post-" stringByAppendingString:target] UTF8String], self);
+		}
+
+		for (NSString *opt in [_port options]) {
+			command_create(_interp, [opt UTF8String], self);
+			command_create(_interp, [[opt stringByAppendingString:@"-append"] UTF8String], self);
+			command_create(_interp, [[opt stringByAppendingString:@"-delete"] UTF8String], self);
+		}
+
 		for (NSString *var in [_port variables]) {
 			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, variable_read, port);
 		}
 
-		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL);
-
-		/* Handle *all* commands via the "unknown" mechanism. */
-		Tcl_CreateObjCommand(_interp, "unknown", unknown_trampoline, self, NULL);
+		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
 
 		const char *portfile = [[_port portfile] UTF8String];
 		if (Tcl_EvalFile(_interp, portfile) != TCL_OK) {
@@ -158,16 +173,24 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 @end
 
 static int
-unknown_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-	assert(objc >= 2);
-	assert(!strcmp(Tcl_GetString(objv[0]), "::unknown"));
-
-	NSArray *args = [[NSArray alloc] initWithTclObjects:++objv count:--objc];
+	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
 	[(id)clientData performCommand:[args objectAtIndex:0] arguments:[args subarrayWithRange:NSMakeRange(1, [args count] - 1)]];
 	[args release];
 
 	return TCL_OK;
+}
+
+static void
+command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
+{
+	Tcl_CmdInfo info;
+	if (Tcl_GetCommandInfo(interp, cmdName, &info) != 0) {
+		NSLog(@"Command '%s' already exists, bailing.", cmdName);
+		abort();
+	}
+	Tcl_CreateObjCommand(interp, cmdName, command_trampoline, clientData, NULL);
 }
 
 static char *

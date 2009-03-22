@@ -159,6 +159,11 @@
 	return _portfile;
 }
 
+- (NSArray *)targets
+{
+	return _targets;
+}
+
 - (BOOL)isTarget:(NSString *)target
 {
 	if ([target hasPrefix:@"pre-"]) {
@@ -183,6 +188,11 @@
 		ret = [_constants objectForKey:name];
 	}
 	return ret;
+}
+
+- (NSArray *)options
+{
+	return [_options allKeys];
 }
 
 - (void)option:(NSString *)option set:(NSArray *)value

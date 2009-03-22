@@ -17,11 +17,13 @@
 
 - (NSString *)portfile;
 
+- (NSArray *)targets;
 - (BOOL)isTarget:(NSString *)target;
 
 - (NSArray *)variables;
 - (NSString *)variable:(NSString *)name;
 
+- (NSArray *)options;
 - (void)option:(NSString *)option set:(NSArray *)value;
 - (void)option:(NSString *)option append:(NSArray *)value;
 - (void)option:(NSString *)option delete:(NSArray *)value;
