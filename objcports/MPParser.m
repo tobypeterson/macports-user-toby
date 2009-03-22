@@ -8,7 +8,7 @@
 
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static int _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
-static char *_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
+static char *_variable(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static void info(Tcl_Interp *interp, const char *command); // debugging
 
 @implementation MPParser
@@ -27,10 +27,8 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	@try {
 		Tcl_Preserve(_interp);
 
-		/* Handle defaults. Ports shouldn't expect any other variables to be set,
-		 * so we can just set them as we go. */
-		for (NSString *def in [_port defaults]) {
-			Tcl_TraceVar(_interp, [def UTF8String], TCL_TRACE_READS, _default, port);
+		for (NSString *var in [_port variables]) {
+			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, _variable, port);
 		}
 
 		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL);
@@ -154,62 +152,12 @@ static void info(Tcl_Interp *interp, const char *command); // debugging
 	} else if ([_port isTarget:command]) {
 		// XXX: store for later use...
 	} else {
-		NSString *option;
-		enum { OPTION_SET, OPTION_APPEND, OPTION_DELETE } action;
 		if ([command hasSuffix:@"-append"]) {
-			option = [command substringWithRange:NSMakeRange(0, [command length] - 7)];
-			action = OPTION_APPEND;
+			[_port option:[command substringWithRange:NSMakeRange(0, [command length] - 7)] append:args];
 		} else if ([command hasSuffix:@"-delete"]) {
-			option = [command substringWithRange:NSMakeRange(0, [command length] - 7)];
-			action = OPTION_DELETE;
+			[_port option:[command substringWithRange:NSMakeRange(0, [command length] - 7)] delete:args];
 		} else {
-			option = command;
-			action = OPTION_SET;
-		}
-
-		if (![[_port options] containsObject:option]) {
-			NSLog(@"? %@", option);
-		}
-
-		// XXX: also need to skip if overridden on command line
-		switch (action) {
-		case OPTION_SET:
-			Tcl_SetVar(_interp, [option UTF8String], [[args componentsJoinedByString:@" "] UTF8String], 0);
-			break;
-		case OPTION_APPEND: {
-			Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
-			int length;
-			if (val == NULL) {
-				val = Tcl_NewListObj(0, NULL);
-				Tcl_SetVar2Ex(_interp, [option UTF8String], NULL, val, 0);
-			}
-			Tcl_ListObjLength(_interp, val, &length);
-			for (NSString *arg in args) {
-				Tcl_Obj *str = Tcl_NewStringObj([arg UTF8String], -1);
-				Tcl_ListObjReplace(_interp, val, length++, 0, 1, &str);
-			}
-			break;
-		}
-		case OPTION_DELETE: {
-			Tcl_Obj *val = Tcl_GetVar2Ex(_interp, [option UTF8String], NULL, 0);
-			int objc;
-			Tcl_Obj **objv;
-			for (NSString *arg in args) {
-				int i;
-				Tcl_ListObjGetElements(_interp, val, &objc, &objv);
-				for (i = 0; i < objc; i++) {
-					if ([arg isEqualToString:[NSString stringWithTclObject:objv[i]]]) {
-						Tcl_ListObjReplace(_interp, val, i, 1, 0, NULL);
-						break; // just want to delete one occurrence
-					}
-				}
-			}
-			// XXX: unset if empty
-			break;
-		}
-		default:
-			abort();
-			break;
+			[_port option:command set:args];
 		}
 	}
 }
@@ -239,11 +187,9 @@ _unknown(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const obj
 }
 
 static char *
-_default(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
+_variable(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
-	assert(flags == TCL_TRACE_READS);
-	/* Default values may contain references to other Tcl variables (or tcl command calls?), so perform the substitution. */
-	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([[(id)clientData default:[NSString stringWithUTF8String:name1]] UTF8String], -1), TCL_SUBST_ALL), 0);
+	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([[(id)clientData variable:[NSString stringWithUTF8String:name1]] UTF8String], -1), TCL_SUBST_ALL), 0);
 	return NULL;
 }
 

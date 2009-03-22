@@ -9,8 +9,10 @@
 
 	NSMutableArray *_targets;
 
-	NSMutableArray *_options;
-	NSMutableDictionary *_defaults;
+	NSMutableArray *_commands;
+
+	NSMutableDictionary *_options;
+	NSMutableDictionary *_constants;
 }
 
 - (id)initWithPortfile:(NSString *)port options:(NSDictionary *)options;
@@ -19,16 +21,16 @@
 
 - (NSArray *)procs;
 
-- (NSArray *)targets;
 - (BOOL)isTarget:(NSString *)target;
 
-- (NSArray *)defaults;
-- (NSString *)default:(NSString *)def;
+- (NSArray *)variables;
+- (NSString *)variable:(NSString *)name;
 
-- (NSArray *)options;
+- (void)option:(NSString *)option set:(NSArray *)value;
+- (void)option:(NSString *)option append:(NSArray *)value;
+- (void)option:(NSString *)option delete:(NSArray *)value;
 
 // Access to underlying parser...
-- (NSString *)option:(NSString *)option;
 - (NSArray *)variants;
 - (NSArray *)platforms;
 
