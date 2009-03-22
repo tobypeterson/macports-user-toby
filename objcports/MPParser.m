@@ -7,24 +7,19 @@
 #include "MPStringAdditions.h"
 
 static void command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData);
-
 static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
-
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
-static void _info(Tcl_Interp *interp, const char *command); // debugging
 
 @implementation MPParser
 
 - (id)initWithPort:(MPPort *)port
 {
 	self = [super init];
-	_port = [port retain];
-	_interp = Tcl_CreateInterp();
-	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
-	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
 
-	// XXX: should probably remove even more functionality
-	Tcl_MakeSafe(_interp);
+	_port = [port retain];
+
+	_interp = Tcl_CreateInterp();
+	Tcl_MakeSafe(_interp); // XXX: should probably remove even more functionality
 
 	@try {
 		Tcl_Preserve(_interp);
@@ -52,9 +47,8 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 
 		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
 
-		const char *portfile = [[_port portfile] UTF8String];
-		if (Tcl_EvalFile(_interp, portfile) != TCL_OK) {
-			NSLog(@"Tcl_EvalFile(%s): %s", portfile, Tcl_GetStringResult(_interp));
+		if (Tcl_EvalFile(_interp, [[_port portfile] UTF8String]) != TCL_OK) {
+			NSLog(@"Tcl_EvalFile(): %s", Tcl_GetStringResult(_interp));
 		}
 
 		Tcl_Release(_interp);
@@ -64,32 +58,15 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 		[self release];
 		self = nil;
 	}
-	@finally {
-		_info(_interp, "[info globals]");
-		_info(_interp, "[info commands]");
-		//NSLog(@"%@", _variants);
-	}
 
 	return self;
 }
 
 - (void)dealloc
 {
-	[_variants release];
-	[_platforms release];
 	Tcl_DeleteInterp(_interp);
 	[_port release];
 	[super dealloc];
-}
-
-- (NSArray *)variants
-{
-	return [_variants allKeys];
-}
-
-- (NSArray *)platforms
-{
-	return _platforms;
 }
 
 - (void)performCommand:(NSString *)command arguments:(NSArray *)args
@@ -125,10 +102,7 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 			release ? [NSString stringWithFormat:@"_%ld", release] : @"",
 			arch ? [NSString stringWithFormat:@"_%@", arch] : @""];
 
-		// XXX: dupe check
-		[_platforms addObject:platformFull];
-		// XXX: check match, right now pretend all platforms are true
-		if (YES) {
+		if ([_port addPlatform:platformFull]) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([command isEqualToString:@"variant"]) {
@@ -145,16 +119,13 @@ static void _info(Tcl_Interp *interp, const char *command); // debugging
 
 		name = [args objectAtIndex:0];
 
+		// this isn't quite right, conflicts can take multiple "arguments"
 		props = [NSMutableDictionary dictionaryWithCapacity:count-2];
  		for (i = 1; i < count - 1; i += 2) {
 			[props setObject:[args objectAtIndex:i+1] forKey:[args objectAtIndex:i]];
 		}
 
-		// XXX: check for dupes (w/ platforms too)
-		[_variants setObject:props forKey:name];
-
-		// XXX: make sure it's set, like platforms just pretend
-		if (YES) {
+		if ([_port addVariant:name properties:props]) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([_port isTarget:command]) {
@@ -209,16 +180,4 @@ _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[
 	[args release];
 
 	return TCL_OK;
-}
-
-static void
-_info(Tcl_Interp *interp, const char *command)
-{
-	Tcl_Obj *result;
-	int objc;
-	Tcl_Obj **objv;
-
-	Tcl_ExprObj(interp, Tcl_NewStringObj(command, -1), &result);
-	Tcl_ListObjGetElements(interp, result, &objc, &objv);
-	//NSLog(@"%@", [NSArray arrayWithTclObjects:objv count:objc]);
 }

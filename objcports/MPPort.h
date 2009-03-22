@@ -11,6 +11,9 @@
 
 	NSMutableDictionary *_options;
 	NSMutableDictionary *_constants;
+
+	NSMutableArray *_platforms;
+	NSMutableDictionary *_variants;
 }
 
 - (id)initWithPortfile:(NSString *)port options:(NSDictionary *)options;
@@ -28,8 +31,10 @@
 - (void)option:(NSString *)option append:(NSArray *)value;
 - (void)option:(NSString *)option delete:(NSArray *)value;
 
-// Access to underlying parser...
-- (NSArray *)variants;
+- (BOOL)addPlatform:(NSString *)platform;
 - (NSArray *)platforms;
+
+- (BOOL)addVariant:(NSString *)variant properties:(NSDictionary *)props;
+- (NSArray *)variants;
 
 @end

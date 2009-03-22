@@ -11,6 +11,9 @@
 	self = [super init];
 	_portfile = [portfile retain];
 
+	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
+	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
+
 	_targets = [[NSMutableArray alloc] initWithCapacity:0];
 	[_targets addObject:@"fetch"];
 	[_targets addObject:@"extract"];
@@ -127,16 +130,16 @@
 	[_options setObject:@"" forKey:@"livecheck.distname"];
 	[_options setObject:@"" forKey:@"test.run"]; // porttest.tcl
 	[_options setObject:@"test" forKey:@"test.target"]; // porttest.tcl
+	[_options setObject:@"" forKey:@"configure.compiler"];
 
 	_constants = [[NSMutableDictionary alloc] initWithCapacity:0];
 	[_constants setObject:@"XXX" forKey:@"worksrcpath"]; // portmain.tcl
+	[_constants setObject:@"XXX" forKey:@"destroot"];
 
 	// XXX: option_proc setup?
 	// options_export?
 
 	_parser = [[MPParser alloc] initWithPort:self];
-
-	//NSLog(@"%@", _options);
 
 	return self;
 }
@@ -150,6 +153,9 @@
 	[_commands release];
 	[_options release];
 	[_constants release];
+
+	[_platforms release];
+	[_variants release];
 
 	[super dealloc];
 }
@@ -227,14 +233,30 @@
 	[tmp release];
 }
 
-- (NSArray *)variants
+- (BOOL)addPlatform:(NSString *)platform
 {
-	return [_parser variants];
+	// XXX: dupe check
+	[_platforms addObject:platform];
+	// XXX: check match, right now pretend all platforms are true
+	return YES;
 }
 
 - (NSArray *)platforms
 {
-	return [_parser platforms];
+	return _platforms;
+}
+
+- (BOOL)addVariant:(NSString *)variant properties:(NSDictionary *)props
+{
+	// XXX: check for dupes (w/ platforms too)
+	[_variants setObject:props forKey:variant];
+	// XXX: make sure it's set, like platforms just pretend
+	return YES;
+}
+
+- (NSArray *)variants
+{
+	return [_variants allKeys];
 }
 
 @end
