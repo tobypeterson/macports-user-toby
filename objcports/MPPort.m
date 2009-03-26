@@ -95,6 +95,10 @@
 	[_options setObject:@"" forKey:@"test.run"]; // porttest.tcl
 	[_options setObject:@"test" forKey:@"test.target"]; // porttest.tcl
 	[_options setObject:@"" forKey:@"configure.compiler"];
+	[_options setObject:@"" forKey:@"configure.cflags"];
+	[_options setObject:@"" forKey:@"configure.cppflags"];
+	[_options setObject:@"" forKey:@"configure.universal_args"];
+	[_options setObject:@"" forKey:@"destroot.target"];
 
 	NSArray *commands = [NSArray arrayWithObjects:
 		@"cvs", // portfetch.tcl

@@ -46,6 +46,7 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		}
 
 		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "post-activate", _nslog, NULL, NULL); // XXX: debugging
 
 		if (Tcl_EvalFile(_interp, [[_port portfile] UTF8String]) != TCL_OK) {
 			NSLog(@"Tcl_EvalFile(): %s", Tcl_GetStringResult(_interp));
