@@ -149,7 +149,7 @@ static int
 command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
 	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
-	[(id)clientData performCommand:[args objectAtIndex:0] arguments:[args subarrayWithRange:NSMakeRange(1, [args count] - 1)]];
+	[(MPParser *)clientData performCommand:[args objectAtIndex:0] arguments:[args subarrayWithRange:NSMakeRange(1, [args count] - 1)]];
 	[args release];
 
 	return TCL_OK;
@@ -169,7 +169,9 @@ command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
 static char *
 variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
-	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([[(id)clientData variable:[NSString stringWithUTF8String:name1]] UTF8String], -1), TCL_SUBST_ALL), 0);
+	NSString *var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
+	assert(var != nil);
+	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([var UTF8String], -1), TCL_SUBST_ALL), 0);
 	return NULL;
 }
 
