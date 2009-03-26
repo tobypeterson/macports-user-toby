@@ -4,14 +4,14 @@
 <dict>
 	<key>applications_dir</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>build.jobs</key>
 	<dict/>
 	<key>build.target</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>buildmakejobs</key>
@@ -20,26 +20,26 @@
 	<dict/>
 	<key>categories</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>checksums</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.awk</key>
 	<dict/>
 	<key>configure.cc</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.ccache</key>
 	<dict/>
 	<key>configure.cflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.compiler</key>
@@ -48,14 +48,14 @@
 	<dict/>
 	<key>configure.cppflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.cxx</key>
 	<dict/>
 	<key>configure.cxxflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.distcc</key>
@@ -68,7 +68,7 @@
 	<dict/>
 	<key>configure.fcflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.install</key>
@@ -77,7 +77,7 @@
 	<dict/>
 	<key>configure.ldflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.libs</key>
@@ -94,17 +94,17 @@
 	<dict/>
 	<key>configure.universal_archs</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>configure.universal_args</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>configure.universal_ldflags</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>cvs.date</key>
@@ -119,41 +119,41 @@
 	<dict/>
 	<key>default_variants</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>depends_build</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>depends_lib</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>depends_run</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>description</key>
 	<dict/>
 	<key>destroot</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>destroot.destdir</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>destroot.keepdirs</key>
 	<dict/>
 	<key>destroot.target</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>destroot.violate_mtree</key>
@@ -162,7 +162,7 @@
 	<dict/>
 	<key>distfiles</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>distname</key>
@@ -187,13 +187,13 @@
 	<dict/>
 	<key>filespath</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>frameworks_dir</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>git.url</key>
 	<dict/>
@@ -221,7 +221,7 @@
 	<dict/>
 	<key>master_sites</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>master_sites.mirror_subdir</key>
@@ -230,34 +230,34 @@
 	<dict/>
 	<key>os.arch</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>os.endian</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>os.major</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>os.platform</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>os.version</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>patch_sites</key>
 	<dict/>
 	<key>patchfiles</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>perl5.bin</key>
@@ -276,8 +276,8 @@
 	<dict/>
 	<key>prefix</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>python.bin</key>
 	<dict/>
@@ -335,8 +335,8 @@
 	<dict/>
 	<key>sysroot</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>test.run</key>
 	<dict/>
@@ -356,26 +356,26 @@
 	<dict/>
 	<key>workpath</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>worksrcdir</key>
 	<dict/>
 	<key>worksrcpath</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>x11font.setup</key>
 	<dict/>
 	<key>x11prefix</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>xcode.build.settings</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>xcode.configuration</key>
@@ -384,7 +384,7 @@
 	<dict/>
 	<key>xcode.destroot.settings</key>
 	<dict>
-		<key>AppendDelete</key>
+		<key>AllowAppendDelete</key>
 		<true/>
 	</dict>
 	<key>xcode.destroot.type</key>
@@ -395,8 +395,8 @@
 	<dict/>
 	<key>xcodeversion</key>
 	<dict>
-		<key>Constant</key>
-		<true/>
+		<key>AllowSet</key>
+		<false/>
 	</dict>
 	<key>zope.need_subdir</key>
 	<dict/>

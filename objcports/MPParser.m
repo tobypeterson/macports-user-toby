@@ -20,10 +20,19 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	_port = [port retain];
 
 	_interp = Tcl_CreateInterp();
-	//Tcl_MakeSafe(_interp); // XXX: should probably remove even more functionality
+	Tcl_MakeSafe(_interp);
+	Tcl_UnsetVar(_interp, "tcl_version", 0);
+	Tcl_UnsetVar(_interp, "tcl_patchLevel", 0);
+	Tcl_UnsetVar(_interp, "tcl_platform", 0);
+	Tcl_DeleteCommand(_interp, "tell");
+	Tcl_DeleteCommand(_interp, "eof");
+	// XXX: etc?
 
 	@try {
 		Tcl_Preserve(_interp);
+
+		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
+		//Tcl_Eval(_interp, "nslog [info commands]");
 
 		command_create(_interp, "PortSystem", self);
 		command_create(_interp, "PortGroup", self);
@@ -47,8 +56,6 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		for (NSString *var in [_port variables]) {
 			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, variable_read, port);
 		}
-
-		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
 
 		// bogus targets
 		Tcl_CreateObjCommand(_interp, "pre-activate", _nslog, NULL, NULL); // XXX: debugging

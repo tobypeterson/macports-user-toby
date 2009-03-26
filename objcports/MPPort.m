@@ -5,6 +5,9 @@
 #include "MPPort.h"
 #include "MPParser.h"
 
+static NSString *kPortVariableAllowSet = @"AllowSet";
+static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
+
 @implementation MPPort
 
 - (id)initWithPortfile:(NSString *)portfile options:(NSDictionary *)options
@@ -37,12 +40,12 @@
 	for (NSString *command in commands) {
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"use_%@", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.dir", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.env", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.env", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.type", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
 	}
 
 	_parser = [[MPParser alloc] initWithPort:self];
@@ -118,7 +121,9 @@
 {
 	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
 	for (NSString *var in [self variables]) {
-		if (![[[_variableInfo objectForKey:var] objectForKey:@"Constant"] boolValue]) {
+		NSNumber *allowSet = [[_variableInfo objectForKey:var] objectForKey:kPortVariableAllowSet];
+		/* Default is YES, so nil is good. */
+		if (allowSet == nil || [allowSet boolValue] == YES) {
 			[ret addObject:var];
 		}
 	}
@@ -134,7 +139,9 @@
 {
 	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
 	for (NSString *var in [self variables]) {
-		if ([[[_variableInfo objectForKey:var] objectForKey:@"AppendDelete"] boolValue]) {
+		NSNumber *allowAppendDelete = [[_variableInfo objectForKey:var] objectForKey:kPortVariableAllowAppendDelete];
+		/* Default is NO, so it must be set. */
+		if ([allowAppendDelete boolValue]) {
 			[ret addObject:var];
 		}
 	}
