@@ -2,52 +2,81 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>prefix</key>
-	<dict/>
-	<key>name</key>
-	<dict/>
-	<key>version</key>
-	<dict/>
-	<key>revision</key>
-	<dict/>
-	<key>epoch</key>
+	<key>build.target</key>
 	<dict/>
 	<key>categories</key>
 	<dict/>
-	<key>maintainers</key>
-	<dict/>
-	<key>description</key>
-	<dict/>
-	<key>long_description</key>
-	<dict/>
-	<key>homepage</key>
-	<dict/>
-	<key>platforms</key>
-	<dict/>
-	<key>master_sites</key>
-	<dict/>
-	<key>use_zip</key>
-	<dict/>
 	<key>checksums</key>
 	<dict/>
-	<key>patchfiles</key>
-	<dict/>
-	<key>depends_build</key>
-	<dict/>
-	<key>depends_lib</key>
-	<dict/>
-	<key>distname</key>
-	<dict/>
-	<key>worksrcdir</key>
-	<dict/>
+	<key>configure.cflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>configure.cppflags</key>
 	<dict>
 		<key>AppendDelete</key>
 		<true/>
 	</dict>
-	<key>configure.cflags</key>
+	<key>configure.universal_args</key>
 	<dict>
 		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>depends_build</key>
+	<dict/>
+	<key>depends_lib</key>
+	<dict/>
+	<key>depends_run</key>
+	<dict/>
+	<key>description</key>
+	<dict/>
+	<key>destroot</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>destroot.destdir</key>
+	<dict/>
+	<key>destroot.target</key>
+	<dict/>
+	<key>distname</key>
+	<dict/>
+	<key>epoch</key>
+	<dict/>
+	<key>extract.suffix</key>
+	<dict/>
+	<key>fetch.type</key>
+	<dict/>
+	<key>homepage</key>
+	<dict/>
+	<key>livecheck.check</key>
+	<dict/>
+	<key>livecheck.regex</key>
+	<dict/>
+	<key>livecheck.url</key>
+	<dict/>
+	<key>long_description</key>
+	<dict/>
+	<key>maintainers</key>
+	<dict/>
+	<key>master_sites</key>
+	<dict/>
+	<key>name</key>
+	<dict/>
+	<key>os.arch</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>os.endian</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>os.major</key>
+	<dict>
+		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>os.platform</key>
@@ -60,27 +89,33 @@
 		<key>Constant</key>
 		<true/>
 	</dict>
-	<key>os.major</key>
-	<dict>
-		<key>Constant</key>
-		<true/>
-	</dict>
-	<key>os.arch</key>
-	<dict>
-		<key>Constant</key>
-		<true/>
-	</dict>
-	<key>os.endian</key>
-	<dict>
-		<key>Constant</key>
-		<true/>
-	</dict>
+	<key>patch_sites</key>
+	<dict/>
+	<key>patchfiles</key>
+	<dict/>
+	<key>platforms</key>
+	<dict/>
+	<key>prefix</key>
+	<dict/>
+	<key>revision</key>
+	<dict/>
+	<key>svn.tag</key>
+	<dict/>
+	<key>svn.url</key>
+	<dict/>
+	<key>universal_variant</key>
+	<dict/>
+	<key>use_bzip2</key>
+	<dict/>
+	<key>use_parallel_build</key>
+	<dict/>
+	<key>use_zip</key>
+	<dict/>
+	<key>version</key>
+	<dict/>
+	<key>worksrcdir</key>
+	<dict/>
 	<key>worksrcpath</key>
-	<dict>
-		<key>Constant</key>
-		<true/>
-	</dict>
-	<key>destroot</key>
 	<dict>
 		<key>Constant</key>
 		<true/>
