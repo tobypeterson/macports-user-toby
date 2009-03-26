@@ -36,6 +36,20 @@
 	<dict/>
 	<key>depends_lib</key>
 	<dict/>
+	<key>distname</key>
+	<dict/>
+	<key>worksrcdir</key>
+	<dict/>
+	<key>configure.cppflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.cflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>os.platform</key>
 	<dict>
 		<key>Constant</key>

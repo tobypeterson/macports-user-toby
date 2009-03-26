@@ -22,10 +22,12 @@
 - (NSArray *)variables;
 - (NSString *)variable:(NSString *)name;
 
-- (NSArray *)options;
-- (void)option:(NSString *)option set:(NSArray *)value;
-- (void)option:(NSString *)option append:(NSArray *)value;
-- (void)option:(NSString *)option delete:(NSArray *)value;
+- (NSArray *)settableVariables;
+- (void)variable:(NSString *)var set:(NSArray *)value;
+
+- (NSArray *)modifiableVariables;
+- (void)variable:(NSString *)var append:(NSArray *)value;
+- (void)variable:(NSString *)var delete:(NSArray *)value;
 
 - (BOOL)addPlatform:(NSArray *)platform;
 - (NSArray *)platforms;

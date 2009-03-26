@@ -112,34 +112,45 @@
 	return ret;
 }
 
-- (NSArray *)options
+- (NSArray *)settableVariables
 {
-	NSMutableArray *options = [NSMutableArray arrayWithCapacity:0];
+	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
 	for (NSString *var in [self variables]) {
 		if (![[[_variableInfo objectForKey:var] objectForKey:@"Constant"] boolValue]) {
-			[options addObject:var];
+			[ret addObject:var];
 		}
 	}
-	return options;
+	return ret;
 }
 
-- (void)option:(NSString *)option set:(NSArray *)value
+- (void)variable:(NSString *)var set:(NSArray *)value
 {
-	[_variables setObject:[value componentsJoinedByString:@" "] forKey:option];
+	[_variables setObject:[value componentsJoinedByString:@" "] forKey:var];
 }
 
-- (void)option:(NSString *)option append:(NSArray *)value
+- (NSArray *)modifiableVariables
 {
-	[_variables setObject:[NSString stringWithFormat:@"%@ %@", [_variables objectForKey:option], [value componentsJoinedByString:@" "]] forKey:option];
+	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
+	for (NSString *var in [self variables]) {
+		if ([[[_variableInfo objectForKey:var] objectForKey:@"AppendDelete"] boolValue]) {
+			[ret addObject:var];
+		}
+	}
+	return ret;
 }
 
-- (void)option:(NSString *)option delete:(NSArray *)value
+- (void)variable:(NSString *)var append:(NSArray *)value
 {
-	NSMutableArray *tmp = [[[_variables objectForKey:option] componentsSeparatedByString:@" "] mutableCopy];
+	[_variables setObject:[NSString stringWithFormat:@"%@ %@", [_variables objectForKey:var], [value componentsJoinedByString:@" "]] forKey:var];
+}
+
+- (void)variable:(NSString *)var delete:(NSArray *)value
+{
+	NSMutableArray *tmp = [[[_variables objectForKey:var] componentsSeparatedByString:@" "] mutableCopy];
 	for (NSString *v in value) {
 		[tmp removeObject:v];
 	}
-	[_variables setObject:[tmp componentsJoinedByString:@" "] forKey:option];
+	[_variables setObject:[tmp componentsJoinedByString:@" "] forKey:var];
 	[tmp release];
 }
 

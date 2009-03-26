@@ -35,8 +35,10 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 			command_create(_interp, [[@"post-" stringByAppendingString:target] UTF8String], self);
 		}
 
-		for (NSString *opt in [_port options]) {
+		for (NSString *opt in [_port settableVariables]) {
 			command_create(_interp, [opt UTF8String], self);
+		}
+		for (NSString *opt in [_port modifiableVariables]) {
 			command_create(_interp, [[opt stringByAppendingString:@"-append"] UTF8String], self);
 			command_create(_interp, [[opt stringByAppendingString:@"-delete"] UTF8String], self);
 		}
@@ -134,11 +136,11 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		// XXX: store for later use...
 	} else {
 		if ([command hasSuffix:@"-append"]) {
-			[_port option:[command substringWithRange:NSMakeRange(0, [command length] - 7)] append:args];
+			[_port variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] append:args];
 		} else if ([command hasSuffix:@"-delete"]) {
-			[_port option:[command substringWithRange:NSMakeRange(0, [command length] - 7)] delete:args];
+			[_port variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] delete:args];
 		} else {
-			[_port option:command set:args];
+			[_port variable:command set:args];
 		}
 	}
 }
