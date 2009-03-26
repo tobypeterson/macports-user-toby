@@ -154,7 +154,16 @@
 	[tmp release];
 }
 
-- (BOOL)addPlatform:(NSArray *)platform
+- (NSArray *)definedPlatforms
+{
+	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
+	for (NSArray *plat in _platforms) {
+		[ret addObject:[plat componentsJoinedByString:@"_"]];
+	}
+	return ret;
+}
+
+- (BOOL)testAndRecordPlatform:(NSArray *)platform
 {
 	struct utsname u;
 	NSString *os;
@@ -187,22 +196,17 @@
 	return YES;
 }
 
-- (NSArray *)platforms
+- (NSArray *)definedVariants
 {
-	return _platforms;
+	return [_variants allKeys];
 }
 
-- (BOOL)addVariant:(NSString *)variant properties:(NSDictionary *)props
+- (BOOL)testAndRecordVariant:(NSString *)variant withProperties:(NSDictionary *)props
 {
 	// XXX: check for dupes (w/ platforms too)
 	[_variants setObject:props forKey:variant];
 	// XXX: make sure it's set, like platforms just pretend
 	return YES;
-}
-
-- (NSArray *)variants
-{
-	return [_variants allKeys];
 }
 
 @end

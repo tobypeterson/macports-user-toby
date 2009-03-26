@@ -13,8 +13,8 @@ main(int argc, char *argv[])
 
 	MPPort *port = [[MPPort alloc] initWithPortfile:[NSString stringWithUTF8String:argv[1]] options:nil];
 	NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
-	NSLog(@"Variants:             %@", [[port variants] componentsJoinedByString:@", "]);
-	NSLog(@"PlatformVariants:     %@", [[port platforms] componentsJoinedByString:@", "]);
+	NSLog(@"Variants:             %@", [[port definedVariants] componentsJoinedByString:@", "]);
+	NSLog(@"PlatformVariants:     %@", [[port definedPlatforms] componentsJoinedByString:@", "]);
 	NSLog(@"Brief Description:    %@", [port variable:@"description"]);
 	NSLog(@"Description:          %@", [port variable:@"long_description"]);
 	NSLog(@"Homepage:             %@", [port variable:@"homepage"]);

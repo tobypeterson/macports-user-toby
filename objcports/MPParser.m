@@ -106,7 +106,7 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 			arch = [args objectAtIndex:2];
 		}
 
-		if ([_port addPlatform:[NSArray arrayWithObjects:os, release, arch, nil]]) {
+		if ([_port testAndRecordPlatform:[NSArray arrayWithObjects:os, release, arch, nil]]) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([command isEqualToString:@"variant"]) {
@@ -129,7 +129,7 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 			[props setObject:[args objectAtIndex:i+1] forKey:[args objectAtIndex:i]];
 		}
 
-		if ([_port addVariant:name properties:props]) {
+		if ([_port testAndRecordVariant:name withProperties:props]) {
 			Tcl_Eval(_interp, [[args lastObject] UTF8String]);
 		}
 	} else if ([_port isTarget:command]) {

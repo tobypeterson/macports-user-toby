@@ -29,10 +29,10 @@
 - (void)variable:(NSString *)var append:(NSArray *)value;
 - (void)variable:(NSString *)var delete:(NSArray *)value;
 
-- (BOOL)addPlatform:(NSArray *)platform;
-- (NSArray *)platforms;
+- (NSArray *)definedPlatforms;
+- (BOOL)testAndRecordPlatform:(NSArray *)platform;
 
-- (BOOL)addVariant:(NSString *)variant properties:(NSDictionary *)props;
-- (NSArray *)variants;
+- (NSArray *)definedVariants;
+- (BOOL)testAndRecordVariant:(NSString *)variant withProperties:(NSDictionary *)props;
 
 @end
