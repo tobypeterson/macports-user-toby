@@ -2,20 +2,99 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>applications_dir</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>build.jobs</key>
+	<dict/>
 	<key>build.target</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>buildmakejobs</key>
+	<dict/>
+	<key>buildnicevalue</key>
 	<dict/>
 	<key>categories</key>
-	<dict/>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>checksums</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.awk</key>
+	<dict/>
+	<key>configure.cc</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.ccache</key>
 	<dict/>
 	<key>configure.cflags</key>
 	<dict>
 		<key>AppendDelete</key>
 		<true/>
 	</dict>
+	<key>configure.compiler</key>
+	<dict/>
+	<key>configure.cpp</key>
+	<dict/>
 	<key>configure.cppflags</key>
 	<dict>
 		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.cxx</key>
+	<dict/>
+	<key>configure.cxxflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.distcc</key>
+	<dict/>
+	<key>configure.f77</key>
+	<dict/>
+	<key>configure.f90</key>
+	<dict/>
+	<key>configure.fc</key>
+	<dict/>
+	<key>configure.fcflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.install</key>
+	<dict/>
+	<key>configure.javac</key>
+	<dict/>
+	<key>configure.ldflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>configure.libs</key>
+	<dict/>
+	<key>configure.perl</key>
+	<dict/>
+	<key>configure.pipe</key>
+	<dict/>
+	<key>configure.pkg_config</key>
+	<dict/>
+	<key>configure.pkg_config_path</key>
+	<dict/>
+	<key>configure.python</key>
+	<dict/>
+	<key>configure.universal_archs</key>
+	<dict>
+		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>configure.universal_args</key>
@@ -23,12 +102,41 @@
 		<key>AppendDelete</key>
 		<true/>
 	</dict>
+	<key>configure.universal_ldflags</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>cvs.date</key>
+	<dict/>
+	<key>cvs.module</key>
+	<dict/>
+	<key>cvs.password</key>
+	<dict/>
+	<key>cvs.root</key>
+	<dict/>
+	<key>cvs.tag</key>
+	<dict/>
+	<key>default_variants</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>depends_build</key>
-	<dict/>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>depends_lib</key>
-	<dict/>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>depends_run</key>
-	<dict/>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>description</key>
 	<dict/>
 	<key>destroot</key>
@@ -37,30 +145,86 @@
 		<true/>
 	</dict>
 	<key>destroot.destdir</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>destroot.keepdirs</key>
 	<dict/>
 	<key>destroot.target</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>destroot.violate_mtree</key>
 	<dict/>
+	<key>dist_subdir</key>
+	<dict/>
+	<key>distfiles</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
 	<key>distname</key>
 	<dict/>
 	<key>epoch</key>
 	<dict/>
+	<key>extract.mkdir</key>
+	<dict/>
+	<key>extract.only</key>
+	<dict/>
 	<key>extract.suffix</key>
 	<dict/>
+	<key>fetch.ignore_sslcert</key>
+	<dict/>
+	<key>fetch.password</key>
+	<dict/>
 	<key>fetch.type</key>
+	<dict/>
+	<key>fetch.use_epsv</key>
+	<dict/>
+	<key>fetch.user</key>
+	<dict/>
+	<key>filespath</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>frameworks_dir</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>git.url</key>
+	<dict/>
+	<key>haskell.setup</key>
 	<dict/>
 	<key>homepage</key>
 	<dict/>
 	<key>livecheck.check</key>
 	<dict/>
+	<key>livecheck.distname</key>
+	<dict/>
+	<key>livecheck.md5</key>
+	<dict/>
+	<key>livecheck.name</key>
+	<dict/>
 	<key>livecheck.regex</key>
 	<dict/>
 	<key>livecheck.url</key>
+	<dict/>
+	<key>livecheck.version</key>
 	<dict/>
 	<key>long_description</key>
 	<dict/>
 	<key>maintainers</key>
 	<dict/>
 	<key>master_sites</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>master_sites.mirror_subdir</key>
 	<dict/>
 	<key>name</key>
 	<dict/>
@@ -92,20 +256,97 @@
 	<key>patch_sites</key>
 	<dict/>
 	<key>patchfiles</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>perl5.bin</key>
+	<dict/>
+	<key>perl5.lib</key>
+	<dict/>
+	<key>perl5.module</key>
+	<dict/>
+	<key>perl5.setup</key>
+	<dict/>
+	<key>perl5.use_module_build</key>
+	<dict/>
+	<key>perl5.version</key>
 	<dict/>
 	<key>platforms</key>
 	<dict/>
 	<key>prefix</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>python.bin</key>
+	<dict/>
+	<key>python.branch</key>
+	<dict/>
+	<key>python.include</key>
+	<dict/>
+	<key>python.pkgd</key>
+	<dict/>
+	<key>python.prefix</key>
 	<dict/>
 	<key>revision</key>
+	<dict/>
+	<key>ruby.bin</key>
+	<dict/>
+	<key>ruby.filename</key>
+	<dict/>
+	<key>ruby.lib</key>
+	<dict/>
+	<key>ruby.module</key>
+	<dict/>
+	<key>ruby.project</key>
+	<dict/>
+	<key>ruby.setup</key>
+	<dict/>
+	<key>ruby.version</key>
+	<dict/>
+	<key>startupitem.create</key>
+	<dict/>
+	<key>startupitem.executable</key>
+	<dict/>
+	<key>startupitem.init</key>
+	<dict/>
+	<key>startupitem.logfile</key>
+	<dict/>
+	<key>startupitem.name</key>
+	<dict/>
+	<key>startupitem.netchange</key>
+	<dict/>
+	<key>startupitem.pidfile</key>
+	<dict/>
+	<key>startupitem.requires</key>
+	<dict/>
+	<key>startupitem.restart</key>
+	<dict/>
+	<key>startupitem.start</key>
+	<dict/>
+	<key>startupitem.stop</key>
+	<dict/>
+	<key>startupitem.type</key>
 	<dict/>
 	<key>svn.tag</key>
 	<dict/>
 	<key>svn.url</key>
 	<dict/>
+	<key>sysroot</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>test.run</key>
+	<dict/>
+	<key>test.target</key>
+	<dict/>
 	<key>universal_variant</key>
 	<dict/>
 	<key>use_bzip2</key>
+	<dict/>
+	<key>use_lzma</key>
 	<dict/>
 	<key>use_parallel_build</key>
 	<dict/>
@@ -113,6 +354,11 @@
 	<dict/>
 	<key>version</key>
 	<dict/>
+	<key>workpath</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
 	<key>worksrcdir</key>
 	<dict/>
 	<key>worksrcpath</key>
@@ -120,5 +366,43 @@
 		<key>Constant</key>
 		<true/>
 	</dict>
+	<key>x11font.setup</key>
+	<dict/>
+	<key>x11prefix</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>xcode.build.settings</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>xcode.configuration</key>
+	<dict/>
+	<key>xcode.destroot.path</key>
+	<dict/>
+	<key>xcode.destroot.settings</key>
+	<dict>
+		<key>AppendDelete</key>
+		<true/>
+	</dict>
+	<key>xcode.destroot.type</key>
+	<dict/>
+	<key>xcode.project</key>
+	<dict/>
+	<key>xcode.target</key>
+	<dict/>
+	<key>xcodeversion</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+	</dict>
+	<key>zope.need_subdir</key>
+	<dict/>
+	<key>zope.product</key>
+	<dict/>
+	<key>zope.setup</key>
+	<dict/>
 </dict>
 </plist>

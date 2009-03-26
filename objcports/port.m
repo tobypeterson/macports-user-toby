@@ -8,22 +8,23 @@ main(int argc, char *argv[])
 {
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
-	if (argc != 2)
+	if (argc < 2)
 		exit(1);
 
-	MPPort *port = [[MPPort alloc] initWithPortfile:[NSString stringWithUTF8String:argv[1]] options:nil];
-	NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
-	NSLog(@"Variants:             %@", [[port definedVariants] componentsJoinedByString:@", "]);
-	NSLog(@"PlatformVariants:     %@", [[port definedPlatforms] componentsJoinedByString:@", "]);
-	NSLog(@"Brief Description:    %@", [port variable:@"description"]);
-	NSLog(@"Description:          %@", [port variable:@"long_description"]);
-	NSLog(@"Homepage:             %@", [port variable:@"homepage"]);
-	NSLog(@"Build Dependencies:   %@", [port variable:@"depends_build"]);
-	NSLog(@"Library Dependencies: %@", [port variable:@"depends_lib"]);
-	NSLog(@"Platforms:            %@", [port variable:@"platforms"]);
-	NSLog(@"Maintainers:          %@", [port variable:@"maintainers"]);
-
-	[port release];
+	while (--argc) {
+		MPPort *port = [[MPPort alloc] initWithPortfile:[NSString stringWithUTF8String:*++argv] options:nil];
+		NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
+		NSLog(@"Variants:             %@", [[port definedVariants] componentsJoinedByString:@", "]);
+		NSLog(@"PlatformVariants:     %@", [[port definedPlatforms] componentsJoinedByString:@", "]);
+		NSLog(@"Brief Description:    %@", [port variable:@"description"]);
+		NSLog(@"Description:          %@", [port variable:@"long_description"]);
+		NSLog(@"Homepage:             %@", [port variable:@"homepage"]);
+		NSLog(@"Build Dependencies:   %@", [port variable:@"depends_build"]);
+		NSLog(@"Library Dependencies: %@", [port variable:@"depends_lib"]);
+		NSLog(@"Platforms:            %@", [port variable:@"platforms"]);
+		NSLog(@"Maintainers:          %@", [port variable:@"maintainers"]);
+		[port release];
+	}
 
 	[pool release];
 	return 0;

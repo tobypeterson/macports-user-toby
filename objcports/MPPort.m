@@ -37,12 +37,12 @@
 	for (NSString *command in commands) {
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"use_%@", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.dir", command]];
-		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
-		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.args", command]];
-		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
 		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.env", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.type", command]];
-		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:@"AppendDelete"] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
 	}
 
 	_parser = [[MPParser alloc] initWithPort:self];
@@ -73,10 +73,12 @@
 {
 	return [NSArray arrayWithObjects:
 		@"fetch",
+		@"checksum",
 		@"extract",
 		@"patch",
 		@"configure",
 		@"build",
+		@"test",
 		@"destroot",
 		nil];
 }
@@ -141,12 +143,13 @@
 
 - (void)variable:(NSString *)var append:(NSArray *)value
 {
-	[_variables setObject:[NSString stringWithFormat:@"%@ %@", [_variables objectForKey:var], [value componentsJoinedByString:@" "]] forKey:var];
+	// XXX: this doesn't work quite right when appending to an empty string
+	[_variables setObject:[NSString stringWithFormat:@"%@ %@", [self variable:var], [value componentsJoinedByString:@" "]] forKey:var];
 }
 
 - (void)variable:(NSString *)var delete:(NSArray *)value
 {
-	NSMutableArray *tmp = [[[_variables objectForKey:var] componentsSeparatedByString:@" "] mutableCopy];
+	NSMutableArray *tmp = [[[self variable:var] componentsSeparatedByString:@" "] mutableCopy];
 	for (NSString *v in value) {
 		[tmp removeObject:v];
 	}

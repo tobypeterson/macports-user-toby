@@ -9,6 +9,7 @@
 static void command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData);
 static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
+static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 
 @implementation MPParser
 
@@ -19,7 +20,7 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 	_port = [port retain];
 
 	_interp = Tcl_CreateInterp();
-	Tcl_MakeSafe(_interp); // XXX: should probably remove even more functionality
+	//Tcl_MakeSafe(_interp); // XXX: should probably remove even more functionality
 
 	@try {
 		Tcl_Preserve(_interp);
@@ -48,10 +49,34 @@ static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *
 		}
 
 		Tcl_CreateObjCommand(_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
+
+		// bogus targets
+		Tcl_CreateObjCommand(_interp, "pre-activate", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(_interp, "post-activate", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "pre-install", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "post-install", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "post-pkg", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "post-mpkg", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "archive", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "install", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "activate", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "unarchive", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "post-clean", _nslog, NULL, NULL); // XXX: debugging
+
+		// functions we need to provide (?)
+		Tcl_CreateObjCommand(_interp, "variant_isset", _fake_boolean, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "variant_set", _fake_boolean, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "tbool", _fake_boolean, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "strsed", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "suffix", _nslog, NULL, NULL); // XXX: debugging
+		Tcl_CreateObjCommand(_interp, "include", _nslog, NULL, NULL); // XXX: debugging
+
+		// variables that should be constant
+		Tcl_CreateObjCommand(_interp, "prefix", _nslog, NULL, NULL);
 
 		if (Tcl_EvalFile(_interp, [[_port portfile] UTF8String]) != TCL_OK) {
 			NSLog(@"Tcl_EvalFile(): %s", Tcl_GetStringResult(_interp));
+			exit(1);
 		}
 
 		Tcl_Release(_interp);
@@ -173,7 +198,7 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 {
 	NSString *var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
 	assert(var != nil);
-	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([var UTF8String], -1), TCL_SUBST_ALL), 0);
+	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([var UTF8String], -1), TCL_SUBST_VARIABLES), 0);
 	return NULL;
 }
 
@@ -185,5 +210,12 @@ _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[
 	NSLog(@"%@", [args componentsJoinedByString:@" "]);
 	[args release];
 
+	return TCL_OK;
+}
+
+static int
+_fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+{
+	Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
 	return TCL_OK;
 }
