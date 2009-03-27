@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		DA96BED00F7C9C2500362779 /* MPIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.m */; };
+		DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */; };
 		DAD371710F0280EF0064AFF4 /* port.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.m */; };
 		DAD371720F0280EF0064AFF4 /* MPArrayAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */; };
 		DAD371730F0280EF0064AFF4 /* MPParser.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716C0F0280EF0064AFF4 /* MPParser.m */; };
@@ -31,6 +33,10 @@
 /* Begin PBXFileReference section */
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8DD76FA10486AA7600D96B5E /* port */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = port; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA96BECE0F7C9C2500362779 /* MPIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPIndex.h; sourceTree = "<group>"; };
+		DA96BECF0F7C9C2500362779 /* MPIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPIndex.m; sourceTree = "<group>"; };
+		DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDictionaryAdditions.h; sourceTree = "<group>"; };
+		DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDictionaryAdditions.m; sourceTree = "<group>"; };
 		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
 		DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPArrayAdditions.h; sourceTree = "<group>"; };
 		DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPArrayAdditions.m; sourceTree = "<group>"; };
@@ -73,6 +79,10 @@
 				DAD371680F0280EF0064AFF4 /* port.m */,
 				DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */,
 				DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */,
+				DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */,
+				DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */,
+				DA96BECE0F7C9C2500362779 /* MPIndex.h */,
+				DA96BECF0F7C9C2500362779 /* MPIndex.m */,
 				DAD3716B0F0280EF0064AFF4 /* MPParser.h */,
 				DAD3716C0F0280EF0064AFF4 /* MPParser.m */,
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
@@ -152,9 +162,11 @@
 			files = (
 				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
 				DAD371720F0280EF0064AFF4 /* MPArrayAdditions.m in Sources */,
+				DAD371750F0280EF0064AFF4 /* MPStringAdditions.m in Sources */,
+				DA96BED00F7C9C2500362779 /* MPIndex.m in Sources */,
 				DAD371730F0280EF0064AFF4 /* MPParser.m in Sources */,
 				DAD371740F0280EF0064AFF4 /* MPPort.m in Sources */,
-				DAD371750F0280EF0064AFF4 /* MPStringAdditions.m in Sources */,
+				DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

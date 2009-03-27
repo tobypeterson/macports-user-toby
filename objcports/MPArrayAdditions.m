@@ -6,19 +6,19 @@
 
 @implementation NSArray (MPArrayAdditions)
 
-+ (id)arrayWithTclObjects:(Tcl_Obj * const *)objects count:(int)count
-{
-	return [[[self alloc] initWithTclObjects:objects count:count] autorelease];
-}
-
 - (id)initWithTclObjects:(Tcl_Obj * const *)objects count:(int)count
 {
 	int i;
 	NSString *array[count];
+	NSArray *result;
 	for (i = 0; i < count; i++) {
-		array[i] = [NSString stringWithTclObject:objects[i]];
+		array[i] = [[NSString alloc] initWithTclObject:objects[i]];
 	}
-	return [self initWithObjects:array count:count];
+	result = [self initWithObjects:array count:count];
+	for (i = 0; i < count; i++) {
+		[array[i] release];
+	}
+	return result;
 }
 
 @end
