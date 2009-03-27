@@ -5,4 +5,6 @@
 
 - (id)initWithPortindex:(NSString *)portindex;
 
+- (NSDictionary *)fullIndex;
+
 @end

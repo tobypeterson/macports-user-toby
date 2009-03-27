@@ -27,7 +27,7 @@ CopyIndexEntryFromTclList(Tcl_Interp *interp, Tcl_Obj **objects, int count)
 			Tcl_Obj **objv;
 			Tcl_ListObjGetElements(interp, objects[i * 2 + 1], &objc, &objv);
 			objs[i] = [[NSDictionary alloc] initWithTclObjects:objv count:objc];
-		} else if ([keys[i] isEqualToString:@"categories"] || [keys[i] isEqualToString:@"maintainers"] || [keys[i] isEqualToString:@"platforms"] || [keys[i] isEqualToString:@"variants"]) {
+		} else if ([keys[i] hasPrefix:@"depends_"]) {
 			int objc;
 			Tcl_Obj **objv;
 			Tcl_ListObjGetElements(interp, objects[i * 2 + 1], &objc, &objv);
@@ -107,6 +107,11 @@ CopyIndexEntryFromTclList(Tcl_Interp *interp, Tcl_Obj **objects, int count)
 {
 	[_storage release];
 	[super dealloc];
+}
+
+- (NSDictionary *)fullIndex
+{
+	return _storage;
 }
 
 @end
