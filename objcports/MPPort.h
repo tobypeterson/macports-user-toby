@@ -25,7 +25,7 @@
 - (NSArray *)settableVariables;
 - (void)variable:(NSString *)var set:(NSArray *)value;
 
-- (NSArray *)modifiableVariables;
+- (NSArray *)settableArrayVariables;
 - (void)variable:(NSString *)var append:(NSArray *)value;
 - (void)variable:(NSString *)var delete:(NSArray *)value;
 

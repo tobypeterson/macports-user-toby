@@ -48,7 +48,7 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		for (NSString *opt in [_port settableVariables]) {
 			command_create(_interp, [opt UTF8String], self);
 		}
-		for (NSString *opt in [_port modifiableVariables]) {
+		for (NSString *opt in [_port settableArrayVariables]) {
 			command_create(_interp, [[opt stringByAppendingString:@"-append"] UTF8String], self);
 			command_create(_interp, [[opt stringByAppendingString:@"-delete"] UTF8String], self);
 		}

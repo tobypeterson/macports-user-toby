@@ -5,8 +5,8 @@
 #include "MPPort.h"
 #include "MPParser.h"
 
-static NSString *kPortVariableAllowSet = @"AllowSet";
-static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
+static NSString *kPortVariableType = @"Type";
+static NSString *kPortVariableConstant = @"Constant";
 
 @implementation MPPort
 
@@ -40,12 +40,12 @@ static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
 	for (NSString *command in commands) {
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"use_%@", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.dir", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.env", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:@"Array" forKey:kPortVariableType] forKey:[NSString stringWithFormat:@"%@.pre_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:@"Array" forKey:kPortVariableType] forKey:[NSString stringWithFormat:@"%@.args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:@"Array" forKey:kPortVariableType] forKey:[NSString stringWithFormat:@"%@.post_args", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:@"Array" forKey:kPortVariableType] forKey:[NSString stringWithFormat:@"%@.env", command]];
 		[_variableInfo setObject:[NSDictionary dictionary] forKey:[NSString stringWithFormat:@"%@.type", command]];
-		[_variableInfo setObject:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:kPortVariableAllowAppendDelete] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
+		[_variableInfo setObject:[NSDictionary dictionaryWithObject:@"Array" forKey:kPortVariableType] forKey:[NSString stringWithFormat:@"%@.cmd", command]];
 	}
 
 	_parser = [[MPParser alloc] initWithPort:self];
@@ -102,15 +102,30 @@ static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
 	return [_variableInfo allKeys];
 }
 
+- (BOOL)variableIsArray:(NSString *)var
+{
+	NSString *type = [[_variableInfo objectForKey:var] objectForKey:kPortVariableType];
+	return [type isEqualToString:@"Array"];
+}
+
 - (NSString *)variable:(NSString *)name
 {
-	NSString *ret = nil;
+	NSString *ret = @"";
+	id val;
 	if ([_variableInfo objectForKey:name] != nil) {
-		ret = [_variables objectForKey:name];
-		if (ret == nil) {
-			ret = @"";
+		val = [_variables objectForKey:name];
+		if ([self variableIsArray:name]) {
+			if (val) {
+				NSLog(@"%@ %@", name, val);
+				assert([val isKindOfClass:[NSArray class]]);
+				ret = [val componentsJoinedByString:@" "];
+			}
+		} else {
+			if (val) {
+				assert([val isKindOfClass:[NSString class]]);
+				ret = val;
+			}
 		}
-		assert([ret isKindOfClass:[NSString class]]);
 	} else {
 		NSLog(@"WARNING: unknown variable %@", name);
 	}
@@ -121,9 +136,8 @@ static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
 {
 	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
 	for (NSString *var in [self variables]) {
-		NSNumber *allowSet = [[_variableInfo objectForKey:var] objectForKey:kPortVariableAllowSet];
-		/* Default is YES, so nil is good. */
-		if (allowSet == nil || [allowSet boolValue] == YES) {
+		NSNumber *constant = [[_variableInfo objectForKey:var] objectForKey:kPortVariableConstant];
+		if (constant == nil || [constant boolValue] == NO) {
 			[ret addObject:var];
 		}
 	}
@@ -132,16 +146,18 @@ static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
 
 - (void)variable:(NSString *)var set:(NSArray *)value
 {
-	[_variables setObject:[value componentsJoinedByString:@" "] forKey:var];
+	if ([self variableIsArray:var]) {
+		[_variables setObject:value forKey:var];
+	} else {
+		[_variables setObject:[value componentsJoinedByString:@" "] forKey:var];
+	}
 }
 
-- (NSArray *)modifiableVariables
+- (NSArray *)settableArrayVariables
 {
 	NSMutableArray *ret = [NSMutableArray arrayWithCapacity:0];
-	for (NSString *var in [self variables]) {
-		NSNumber *allowAppendDelete = [[_variableInfo objectForKey:var] objectForKey:kPortVariableAllowAppendDelete];
-		/* Default is NO, so it must be set. */
-		if ([allowAppendDelete boolValue]) {
+	for (NSString *var in [self settableVariables]) {
+		if ([self variableIsArray:var]) {
 			[ret addObject:var];
 		}
 	}
@@ -150,17 +166,30 @@ static NSString *kPortVariableAllowAppendDelete = @"AllowAppendDelete";
 
 - (void)variable:(NSString *)var append:(NSArray *)value
 {
-	// XXX: this doesn't work quite right when appending to an empty string
-	[_variables setObject:[NSString stringWithFormat:@"%@ %@", [self variable:var], [value componentsJoinedByString:@" "]] forKey:var];
+	id old = [_variables objectForKey:var];
+	if (old) {
+		assert([old isKindOfClass:[NSArray class]]);
+		[_variables setObject:[old arrayByAddingObjectsFromArray:value] forKey:var];
+	} else {
+		[_variables setObject:value forKey:var];
+	}
 }
 
 - (void)variable:(NSString *)var delete:(NSArray *)value
 {
-	NSMutableArray *tmp = [[[self variable:var] componentsSeparatedByString:@" "] mutableCopy];
+	id old;
+	NSMutableArray *tmp;
+
+	old = [_variables objectForKey:var];
+	if (old == nil) {
+		return;
+	}
+	assert([old isKindOfClass:[NSArray class]]);
+	tmp = [old mutableCopy];
 	for (NSString *v in value) {
 		[tmp removeObject:v];
 	}
-	[_variables setObject:[tmp componentsJoinedByString:@" "] forKey:var];
+	[_variables setObject:tmp forKey:var];
 	[tmp release];
 }
 
