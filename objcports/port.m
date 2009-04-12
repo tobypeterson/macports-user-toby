@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 #endif
 
 	while (--argc) {
-		MPPort *port = [[MPPort alloc] initWithPortfile:[NSString stringWithUTF8String:*++argv] options:nil];
+		MPPort *port = [[MPPort alloc] initWithPath:[NSString stringWithUTF8String:*++argv] options:nil];
 		NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
 		NSLog(@"Variants:             %@", [[port definedVariants] componentsJoinedByString:@", "]);
 		NSLog(@"PlatformVariants:     %@", [[port definedPlatforms] componentsJoinedByString:@", "]);

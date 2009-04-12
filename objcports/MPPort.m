@@ -10,10 +10,10 @@ static NSString *kPortVariableConstant = @"Constant";
 
 @implementation MPPort
 
-- (id)initWithPortfile:(NSString *)portfile options:(NSDictionary *)options
+- (id)initWithURL:(NSURL *)url options:(NSDictionary *)options
 {
 	self = [super init];
-	_portfile = [portfile retain];
+	_url = [url retain];
 
 	_platforms = [[NSMutableArray alloc] initWithCapacity:0];
 	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -53,10 +53,20 @@ static NSString *kPortVariableConstant = @"Constant";
 	return self;
 }
 
+- (id)initWithPath:(NSString *)path options:(NSDictionary *)options
+{
+	NSString *standardizedPath;
+	NSURL *url;
+
+	standardizedPath = [path stringByStandardizingPath];
+	url = [NSURL fileURLWithPath:standardizedPath isDirectory:YES];
+	return [self initWithURL:url options:options];
+}
+
 - (void)dealloc
 {
 	[_parser release];
-	[_portfile release];
+	[_url release];
 
 	[_variableInfo release];
 	[_variables release];
@@ -69,7 +79,7 @@ static NSString *kPortVariableConstant = @"Constant";
 
 - (NSString *)portfile
 {
-	return _portfile;
+	return [[_url path] stringByAppendingPathComponent:@"Portfile"];
 }
 
 - (NSArray *)targets

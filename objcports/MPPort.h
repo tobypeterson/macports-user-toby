@@ -2,7 +2,7 @@
 
 @interface MPPort : NSObject
 {
-	NSString *_portfile;
+	NSURL *_url;
 	MPParser *_parser;
 
 	NSMutableDictionary *_variableInfo;
@@ -12,7 +12,8 @@
 	NSMutableDictionary *_variants;
 }
 
-- (id)initWithPortfile:(NSString *)port options:(NSDictionary *)options;
+- (id)initWithURL:(NSURL *)url options:(NSDictionary *)options;
+- (id)initWithPath:(NSString *)url options:(NSDictionary *)options;
 
 - (NSString *)portfile;
 
