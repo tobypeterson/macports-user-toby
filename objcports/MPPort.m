@@ -12,6 +12,7 @@ static NSString *kPortVariableConstant = @"Constant";
 
 - (id)initWithURL:(NSURL *)url options:(NSDictionary *)options
 {
+	NSData *vdata;
 	self = [super init];
 	_url = [url retain];
 
@@ -19,7 +20,11 @@ static NSString *kPortVariableConstant = @"Constant";
 	_variants = [[NSMutableDictionary alloc] initWithCapacity:0];
 
 	_variables = [[NSMutableDictionary alloc] initWithCapacity:0];
-	_variableInfo = [[NSMutableDictionary alloc] initWithContentsOfFile:@"variables.plist"];
+
+	//_variableInfo = [[NSMutableDictionary alloc] initWithContentsOfFile:@"variables.plist"];
+	vdata = [[NSData alloc] initWithContentsOfMappedFile:@"variables.plist"];
+	_variableInfo = [[NSPropertyListSerialization propertyListWithData:vdata options:kCFPropertyListMutableContainersAndLeaves format:NULL error:NULL] retain];
+	[vdata release];
 
 	NSArray *commands = [NSArray arrayWithObjects:
 		@"cvs", // portfetch.tcl
