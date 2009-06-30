@@ -54,7 +54,7 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		}
 
 		for (NSString *var in [_port variables]) {
-			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, variable_read, port);
+			Tcl_TraceVar(_interp, [var UTF8String], TCL_TRACE_READS, variable_read, _port);
 		}
 
 		// bogus targets
