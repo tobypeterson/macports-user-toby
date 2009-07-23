@@ -4,9 +4,12 @@
 
 #include "MPPort.h"
 #include "MPArrayAdditions.h"
+#include "MPStringAdditions.h"
 
 static NSString *kPortVariableType = @"Type";
 static NSString *kPortVariableConstant = @"Constant";
+static NSString *kPortVariableDefault = @"Default";
+static NSString *kPortVariableCallback = @"Callback";
 
 static void command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData);
 static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
@@ -210,24 +213,37 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	return [type isEqualToString:@"Array"];
 }
 
+- (id)variableCallback:(NSString *)name
+{
+	return @"callback result";
+}
+
 - (NSString *)variable:(NSString *)name
 {
-	NSString *ret = @"";
-	id val;
-	if ([_variableInfo objectForKey:name] != nil) {
-		val = [_variables objectForKey:name];
-		if ([self variableIsArray:name]) {
-			if (val) {
-				NSLog(@"%@ %@", name, val);
-				assert([val isKindOfClass:[NSArray class]]);
-				ret = [val componentsJoinedByString:@" "];
+	NSDictionary *info;
+	id setValue;
+	id defValue;
+	NSString *ret = nil;
+
+	info = [_variableInfo objectForKey:name];
+	if (info != nil) {
+		if ((setValue = [_variables objectForKey:name])) {
+			if ([self variableIsArray:name]) {
+				NSLog(@"%@ %@", name, setValue);
+				assert([setValue isKindOfClass:[NSArray class]]);
+				ret = [setValue componentsJoinedByString:@" "];
+			} else {
+				assert([setValue isKindOfClass:[NSString class]]);
+				ret = setValue;
 			}
+		} else if ((defValue = [info objectForKey:kPortVariableDefault]) != nil) {
+			ret = defValue;
+		} else if ([[info objectForKey:kPortVariableCallback] boolValue] == YES) {
+			ret = [self variableCallback:name];
 		} else {
-			if (val) {
-				assert([val isKindOfClass:[NSString class]]);
-				ret = val;
-			}
+			ret = [NSString stringWithUTF8String:""];
 		}
+		ret = [[[NSString alloc] initWithTclObject:Tcl_SubstObj(_interp, Tcl_NewStringObj([ret UTF8String], -1), TCL_SUBST_VARIABLES)] autorelease];
 	} else {
 		NSLog(@"WARNING: unknown variable %@", name);
 	}
@@ -451,7 +467,7 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 {
 	NSString *var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
 	assert(var != nil);
-	Tcl_SetVar2Ex(interp, name1, name2, Tcl_SubstObj(interp, Tcl_NewStringObj([var UTF8String], -1), TCL_SUBST_VARIABLES), 0);
+	Tcl_SetVar2(interp, name1, name2, [var UTF8String], 0);
 	return NULL;
 }
 

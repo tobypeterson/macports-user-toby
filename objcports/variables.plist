@@ -276,6 +276,8 @@
 	<dict/>
 	<key>prefix</key>
 	<dict>
+		<key>Default</key>
+		<string>/opt/local</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
