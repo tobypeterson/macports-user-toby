@@ -143,7 +143,11 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		[self release];
 		self = nil;
 	}
-	
+
+	for (NSString *vv in _variableInfo) {
+		NSLog(@"%@ -- %@ -- %@", vv, [_variables objectForKey:vv], [self variable:vv]);
+	}
+
 	return self;
 }
 
@@ -213,9 +217,39 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	return [type isEqualToString:@"Array"];
 }
 
-- (id)variableCallback:(NSString *)name
+- (id)defaultCallback:(NSString *)name
 {
-	return @"callback result";
+	return @"";
+}
+
+- (id)osInfo:(NSString *)name
+{
+	NSString *ret = nil;
+	int rc;
+	struct utsname u;
+
+	rc = uname(&u);
+	assert(rc == 0);
+
+	if ([name isEqualToString:@"os.platform"]) {
+		ret = [[NSString stringWithUTF8String:u.sysname] lowercaseString];
+	} else if ([name isEqualToString:@"os.arch"]) {
+		ret = [NSString stringWithUTF8String:u.machine];
+	} else if ([name isEqualToString:@"os.endian"]) {
+#ifdef __BIG_ENDIAN__
+		ret = @"big";
+#else
+		ret = @"little";
+#endif
+	} else if ([name isEqualToString:@"os.major"]) {
+		ret = [[[NSString stringWithUTF8String:u.release] componentsSeparatedByString:@"."] objectAtIndex:0];
+	} else if ([name isEqualToString:@"os.version"]) {
+		ret = [NSString stringWithUTF8String:u.release];
+	} else {
+		abort();
+	}
+
+	return ret;
 }
 
 - (NSString *)variable:(NSString *)name
@@ -223,6 +257,7 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	NSDictionary *info;
 	id setValue;
 	id defValue;
+	id callback;
 	NSString *ret = nil;
 
 	info = [_variableInfo objectForKey:name];
@@ -236,10 +271,11 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 				assert([setValue isKindOfClass:[NSString class]]);
 				ret = setValue;
 			}
-		} else if ((defValue = [info objectForKey:kPortVariableDefault]) != nil) {
+		} else if ((defValue = [info objectForKey:kPortVariableDefault])) {
 			ret = defValue;
-		} else if ([[info objectForKey:kPortVariableCallback] boolValue] == YES) {
-			ret = [self variableCallback:name];
+		} else if ((callback = [info objectForKey:kPortVariableCallback])) {
+			assert([callback isKindOfClass:[NSString class]]);
+			ret = [self performSelector:NSSelectorFromString(callback) withObject:name];
 		} else {
 			ret = [NSString stringWithUTF8String:""];
 		}

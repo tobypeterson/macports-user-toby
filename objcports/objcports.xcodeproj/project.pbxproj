@@ -44,6 +44,7 @@
 		DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPStringAdditions.h; sourceTree = "<group>"; };
 		DAD371700F0280EF0064AFF4 /* MPStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPStringAdditions.m; sourceTree = "<group>"; };
 		DAD371940F0281940064AFF4 /* libtcl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtcl.dylib; path = /usr/lib/libtcl.dylib; sourceTree = "<absolute>"; };
+		FD1CD53B1018F5AD0071534F /* variables.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = variables.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +85,7 @@
 				DAD3716E0F0280EF0064AFF4 /* MPPort.m */,
 				DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */,
 				DAD371700F0280EF0064AFF4 /* MPStringAdditions.m */,
+				FD1CD53B1018F5AD0071534F /* variables.plist */,
 			);
 			name = Source;
 			sourceTree = "<group>";

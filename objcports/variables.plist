@@ -186,7 +186,7 @@
 		<key>Constant</key>
 		<true/>
 		<key>Callback</key>
-		<true/>
+		<string>defaultCallback:</string>
 	</dict>
 	<key>dist_subdir</key>
 	<dict/>
@@ -233,7 +233,7 @@
 		<key>Constant</key>
 		<true/>
 		<key>Callback</key>
-		<true/>
+		<string>defaultCallback:</string>
 	</dict>
 	<key>frameworks_dir</key>
 	<dict>
@@ -270,7 +270,10 @@
 	<key>long_description</key>
 	<dict/>
 	<key>maintainers</key>
-	<dict/>
+	<dict>
+		<key>Type</key>
+		<string>Array</string>
+	</dict>
 	<key>master_sites</key>
 	<dict>
 		<key>Type</key>
@@ -282,26 +285,36 @@
 	<dict/>
 	<key>os.arch</key>
 	<dict>
+		<key>Callback</key>
+		<string>osInfo:</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>os.endian</key>
 	<dict>
+		<key>Callback</key>
+		<string>osInfo:</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>os.major</key>
 	<dict>
+		<key>Callback</key>
+		<string>osInfo:</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>os.platform</key>
 	<dict>
+		<key>Callback</key>
+		<string>osInfo:</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
 	<key>os.version</key>
 	<dict>
+		<key>Callback</key>
+		<string>osInfo:</string>
 		<key>Constant</key>
 		<true/>
 	</dict>
@@ -416,7 +429,7 @@
 		<key>Constant</key>
 		<true/>
 		<key>Callback</key>
-		<true/>
+		<string>defaultCallback:</string>
 	</dict>
 	<key>worksrcdir</key>
 	<dict>
