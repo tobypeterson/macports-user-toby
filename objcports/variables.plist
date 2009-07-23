@@ -6,6 +6,8 @@
 	<dict>
 		<key>Constant</key>
 		<true/>
+		<key>Default</key>
+		<string>/Applications/MacPorts</string>
 	</dict>
 	<key>build.jobs</key>
 	<dict/>
@@ -139,15 +141,33 @@
 	</dict>
 	<key>description</key>
 	<dict/>
+	<key>destdir</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+		<key>Default</key>
+		<string>destroot</string>
+	</dict>
+	<key>destpath</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+		<key>Default</key>
+		<string>${workpath}/${destdir}</string>
+	</dict>
 	<key>destroot</key>
 	<dict>
 		<key>Constant</key>
 		<true/>
+		<key>Default</key>
+		<string>${destpath}</string>
 	</dict>
 	<key>destroot.destdir</key>
 	<dict>
 		<key>Type</key>
 		<string>Array</string>
+		<key>Default</key>
+		<string>DESTDIR=${destroot}</string>
 	</dict>
 	<key>destroot.keepdirs</key>
 	<dict/>
@@ -157,7 +177,17 @@
 		<string>Array</string>
 	</dict>
 	<key>destroot.violate_mtree</key>
-	<dict/>
+	<dict>
+		<key>Default</key>
+		<string>no</string>
+	</dict>
+	<key>developer_dir</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+		<key>Callback</key>
+		<true/>
+	</dict>
 	<key>dist_subdir</key>
 	<dict/>
 	<key>distfiles</key>
@@ -166,9 +196,15 @@
 		<string>Array</string>
 	</dict>
 	<key>distname</key>
-	<dict/>
+	<dict>
+		<key>Default</key>
+		<string>${name}-${version}</string>
+	</dict>
 	<key>epoch</key>
-	<dict/>
+	<dict>
+		<key>Default</key>
+		<string>0</string>
+	</dict>
 	<key>extract.mkdir</key>
 	<dict/>
 	<key>extract.only</key>
@@ -185,15 +221,26 @@
 	<dict/>
 	<key>fetch.user</key>
 	<dict/>
+	<key>filesdir</key>
+	<dict>
+		<key>Constant</key>
+		<true/>
+		<key>Default</key>
+		<string>files</string>
+	</dict>
 	<key>filespath</key>
 	<dict>
 		<key>Constant</key>
+		<true/>
+		<key>Callback</key>
 		<true/>
 	</dict>
 	<key>frameworks_dir</key>
 	<dict>
 		<key>Constant</key>
 		<true/>
+		<key>Default</key>
+		<string>${prefix}/Library/Frameworks</string>
 	</dict>
 	<key>git.url</key>
 	<dict/>
@@ -201,6 +248,11 @@
 	<dict/>
 	<key>homepage</key>
 	<dict/>
+	<key>license</key>
+	<dict>
+		<key>Default</key>
+		<string>unknown</string>
+	</dict>
 	<key>livecheck.check</key>
 	<dict/>
 	<key>livecheck.distname</key>
@@ -292,7 +344,10 @@
 	<key>python.prefix</key>
 	<dict/>
 	<key>revision</key>
-	<dict/>
+	<dict>
+		<key>Default</key>
+		<string>0</string>
+	</dict>
 	<key>ruby.bin</key>
 	<dict/>
 	<key>ruby.filename</key>
@@ -360,9 +415,14 @@
 	<dict>
 		<key>Constant</key>
 		<true/>
+		<key>Callback</key>
+		<true/>
 	</dict>
 	<key>worksrcdir</key>
-	<dict/>
+	<dict>
+		<key>Default</key>
+		<string>${distname}</string>
+	</dict>
 	<key>worksrcpath</key>
 	<dict>
 		<key>Constant</key>
