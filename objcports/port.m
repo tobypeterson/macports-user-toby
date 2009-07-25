@@ -3,6 +3,7 @@
 
 #include "MPIndex.h"
 #include "MPPort.h"
+#include "MPConfig.h"
 
 int
 main(int argc, char *argv[])
@@ -12,6 +13,8 @@ main(int argc, char *argv[])
 	if (argc < 2)
 		exit(1);
 
+	NSLog(@"%@", [MPConfig sharedConfig]);
+	
 #if 0
 	NSString *filename = [[NSString alloc] initWithUTF8String:argv[1]];
 	MPIndex *index = [[MPIndex alloc] initWithPortindex:filename];
