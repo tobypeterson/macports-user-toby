@@ -27,7 +27,6 @@ patchfiles      patch-configure \
                 patch-src__audio__macosx__SDL_coreaudio.c \
                 patch-src__video__cocoa__SDL_cocoakeyboard.m \
                 patch-src__video__cocoa__SDL_cocoamodes.m \
-                patch-src__video__cocoa__SDL_cocoawindow.h \
-                patch-src__video__cocoa__SDL_cocoawindow.m
+                patch-src__video__cocoa__SDL_cocoawindow.h
 
 configure.args  --without-x --disable-cdrom
