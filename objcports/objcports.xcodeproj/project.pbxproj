@@ -181,6 +181,12 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					MacPorts,
+					variables,
+					"$(SRCROOT)/variables.plist",
+				);
 				PRODUCT_NAME = port;
 			};
 			name = Release;

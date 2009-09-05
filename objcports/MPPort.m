@@ -1,6 +1,7 @@
 #include <Foundation/Foundation.h>
 #include <tcl.h>
 #include <sys/utsname.h>
+#include <mach-o/getsect.h>
 
 #include "MPPort.h"
 #include "MPArrayAdditions.h"
@@ -28,7 +29,10 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 
 - (id)initWithURL:(NSURL *)url options:(NSDictionary *)options
 {
+	char *sectdata;
+	unsigned long sectsize;
 	NSData *vdata;
+
 	self = [super init];
 	_url = [url retain];
 
@@ -38,7 +42,9 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	_variables = [[NSMutableDictionary alloc] initWithCapacity:0];
 
 	//_variableInfo = [[NSMutableDictionary alloc] initWithContentsOfFile:@"variables.plist"];
-	vdata = [[NSData alloc] initWithContentsOfMappedFile:@"variables.plist"];
+	sectdata = getsectdata("MacPorts", "variables", &sectsize);
+	assert(sectdata);
+	vdata = [[NSData alloc] initWithBytesNoCopy:sectdata length:sectsize freeWhenDone:NO];
 	_variableInfo = [[NSPropertyListSerialization propertyListWithData:vdata options:kCFPropertyListMutableContainersAndLeaves format:NULL error:NULL] retain];
 	[vdata release];
 
