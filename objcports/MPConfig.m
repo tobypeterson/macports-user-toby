@@ -75,6 +75,8 @@ static MPConfig *sharedConfigInstance = nil;
 					v = @"";
 				}
 				[_config setObject:v forKey:k];
+				[k release];
+				[v release];
 			}
 		}
 		fclose(fp);
