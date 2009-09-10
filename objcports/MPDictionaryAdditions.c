@@ -1,4 +1,4 @@
-#include <Foundation/Foundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <tcl.h>
 
 #include "MPDictionaryAdditions.h"

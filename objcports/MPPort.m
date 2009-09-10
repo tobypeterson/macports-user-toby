@@ -285,7 +285,7 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		} else {
 			ret = [NSString stringWithUTF8String:""];
 		}
-		ret = [[[NSString alloc] initWithTclObject:Tcl_SubstObj(_interp, Tcl_NewStringObj([ret UTF8String], -1), TCL_SUBST_VARIABLES)] autorelease];
+		ret = [(NSString *)CFStringCreateWithTclObject(NULL, Tcl_SubstObj(_interp, Tcl_NewStringObj([ret UTF8String], -1), TCL_SUBST_VARIABLES)) autorelease];
 	} else {
 		NSLog(@"WARNING: unknown variable %@", name);
 	}
@@ -449,7 +449,7 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		NSUInteger count = [args count];
 		NSString *name;
 		NSMutableDictionary *props;
-		int i;
+		NSUInteger i;
 		
 		// variant name [a b c d] {}
 		if (count < 2 || count % 2) {
@@ -486,9 +486,9 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 static int
 command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-	NSArray *args = [[NSArray alloc] initWithTclObjects:objv count:objc];
-	[(MPPort *)clientData performCommand:[args objectAtIndex:0] arguments:[args subarrayWithRange:NSMakeRange(1, [args count] - 1)]];
-	[args release];
+	CFArrayRef args = CFArrayCreateWithTclObjects(NULL, objv, objc);
+	[(MPPort *)clientData performCommand:[(NSArray *)args objectAtIndex:0] arguments:[(NSArray *)args subarrayWithRange:NSMakeRange(1, [(NSArray *)args count] - 1)]];
+	CFRelease(args);
 	
 	return TCL_OK;
 }
@@ -507,7 +507,9 @@ command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
 static char *
 variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
-	NSString *var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
+	NSString *var;
+
+	var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
 	assert(var != nil);
 	Tcl_SetVar2(interp, name1, name2, [var UTF8String], 0);
 	return NULL;
@@ -517,9 +519,18 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 static int
 _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
-	NSArray *args = [[NSArray alloc] initWithTclObjects:++objv count:--objc];
-	NSLog(@"%@", [args componentsJoinedByString:@" "]);
-	[args release];
+	CFArrayRef args;
+	CFStringRef str;
+
+	args = CFArrayCreateWithTclObjects(NULL, ++objv, --objc);
+	if (args) {
+		str = CFStringCreateByCombiningStrings(NULL, args, CFSTR(" "));
+		if (str) {
+			CFShow(str);
+			CFRelease(str);
+		}
+		CFRelease(args);
+	}
 	
 	return TCL_OK;
 }

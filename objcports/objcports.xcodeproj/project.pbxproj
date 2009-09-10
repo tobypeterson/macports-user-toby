@@ -11,11 +11,11 @@
 		DA13887B101AED7000F73A82 /* MPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = DA13887A101AED7000F73A82 /* MPConfig.m */; };
 		DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = DA7AF1BB1058D1E200CF2187 /* internal.c */; };
 		DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.c */; };
-		DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */; };
+		DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.c */; };
 		DAD371710F0280EF0064AFF4 /* port.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.m */; };
-		DAD371720F0280EF0064AFF4 /* MPArrayAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */; };
+		DAD371720F0280EF0064AFF4 /* MPArrayAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */; };
 		DAD371740F0280EF0064AFF4 /* MPPort.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716E0F0280EF0064AFF4 /* MPPort.m */; };
-		DAD371750F0280EF0064AFF4 /* MPStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371700F0280EF0064AFF4 /* MPStringAdditions.m */; };
+		DAD371750F0280EF0064AFF4 /* MPStringAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */; };
 		DAD371950F0281940064AFF4 /* libtcl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DAD371940F0281940064AFF4 /* libtcl.dylib */; };
 /* End PBXBuildFile section */
 
@@ -41,14 +41,14 @@
 		DA96BECE0F7C9C2500362779 /* MPIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPIndex.h; sourceTree = "<group>"; };
 		DA96BECF0F7C9C2500362779 /* MPIndex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPIndex.c; sourceTree = "<group>"; };
 		DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDictionaryAdditions.h; sourceTree = "<group>"; };
-		DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPDictionaryAdditions.m; sourceTree = "<group>"; };
+		DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPDictionaryAdditions.c; sourceTree = "<group>"; };
 		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
 		DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPArrayAdditions.h; sourceTree = "<group>"; };
-		DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPArrayAdditions.m; sourceTree = "<group>"; };
+		DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPArrayAdditions.c; sourceTree = "<group>"; };
 		DAD3716D0F0280EF0064AFF4 /* MPPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPort.h; sourceTree = "<group>"; };
 		DAD3716E0F0280EF0064AFF4 /* MPPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPPort.m; sourceTree = "<group>"; };
 		DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPStringAdditions.h; sourceTree = "<group>"; };
-		DAD371700F0280EF0064AFF4 /* MPStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPStringAdditions.m; sourceTree = "<group>"; };
+		DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPStringAdditions.c; sourceTree = "<group>"; };
 		DAD371940F0281940064AFF4 /* libtcl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtcl.dylib; path = /usr/lib/libtcl.dylib; sourceTree = "<absolute>"; };
 		FD1CD53B1018F5AD0071534F /* variables.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = variables.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,15 +82,15 @@
 			children = (
 				DAD371680F0280EF0064AFF4 /* port.m */,
 				DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */,
-				DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.m */,
+				DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */,
 				DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */,
-				DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.m */,
+				DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.c */,
 				DA96BECE0F7C9C2500362779 /* MPIndex.h */,
 				DA96BECF0F7C9C2500362779 /* MPIndex.c */,
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
 				DAD3716E0F0280EF0064AFF4 /* MPPort.m */,
 				DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */,
-				DAD371700F0280EF0064AFF4 /* MPStringAdditions.m */,
+				DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */,
 				DA138879101AED7000F73A82 /* MPConfig.h */,
 				DA13887A101AED7000F73A82 /* MPConfig.m */,
 				DA7AF1BA1058D1E200CF2187 /* internal.h */,
@@ -168,11 +168,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
-				DAD371720F0280EF0064AFF4 /* MPArrayAdditions.m in Sources */,
-				DAD371750F0280EF0064AFF4 /* MPStringAdditions.m in Sources */,
+				DAD371720F0280EF0064AFF4 /* MPArrayAdditions.c in Sources */,
+				DAD371750F0280EF0064AFF4 /* MPStringAdditions.c in Sources */,
 				DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */,
 				DAD371740F0280EF0064AFF4 /* MPPort.m in Sources */,
-				DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.m in Sources */,
+				DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.c in Sources */,
 				DA13887B101AED7000F73A82 /* MPConfig.m in Sources */,
 				DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */,
 			);
@@ -202,7 +202,18 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 			};

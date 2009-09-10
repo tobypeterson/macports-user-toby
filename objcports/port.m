@@ -14,13 +14,15 @@ main(int argc, char *argv[])
 		exit(1);
 
 	NSLog(@"%@", [MPConfig sharedConfig]);
-	
+
+#if 0
 	CFStringRef filename = CFStringCreateWithCString(NULL, argv[1], kCFStringEncodingUTF8);
 	CFDictionaryRef index = MPCopyPortIndex(filename);
 	CFShow(index);
 	CFRelease(index);
 	CFRelease(filename);
 	return 0;
+#endif
 
 	while (--argc) {
 		MPPort *port = [[MPPort alloc] initWithPath:[NSString stringWithUTF8String:*++argv] options:nil];
