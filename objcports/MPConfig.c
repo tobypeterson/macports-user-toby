@@ -99,5 +99,7 @@ MPCopyConfig()
 	}
 	regfree(&re);
 
+	CFRelease(configFiles);
+
 	return config;
 }
