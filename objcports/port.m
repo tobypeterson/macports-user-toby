@@ -8,12 +8,15 @@
 int
 main(int argc, char *argv[])
 {
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
+#if 0
+	CFDictionaryRef config = MPCopyConfig();
+	CFShow(config);
+	CFRelease(config);
+	return 0;
+#endif
 
 	if (argc < 2)
 		exit(1);
-
-	NSLog(@"%@", [MPConfig sharedConfig]);
 
 #if 0
 	CFStringRef filename = CFStringCreateWithCString(NULL, argv[1], kCFStringEncodingUTF8);
@@ -24,6 +27,8 @@ main(int argc, char *argv[])
 	return 0;
 #endif
 
+	NSAutoreleasePool *pool = [NSAutoreleasePool new];
+	
 	while (--argc) {
 		MPPort *port = [[MPPort alloc] initWithPath:[NSString stringWithUTF8String:*++argv] options:nil];
 		NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
