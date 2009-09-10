@@ -35,23 +35,58 @@ do_info(int argc, char *argv[])
 		CFStringRef path;
 		CFURLRef url;
 		mp_port_t port;
-		CFStringRef tmp;
+		CFTypeRef tmp1, tmp2, tmp3;
 
 		path = CFStringCreateWithCString(NULL, *++argv, kCFStringEncodingUTF8);
 		url = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, TRUE);
 		port = mp_port_create(url, NULL);
-		fprintf_cf(stdout, CFSTR("%@ @%@ (%@)\n"), mp_port_variable(port, CFSTR("name")), mp_port_variable(port, CFSTR("version")), mp_port_variable(port, CFSTR("categories")));
-		tmp = CFStringCreateByCombiningStrings(NULL, mp_port_defined_variants(port), CFSTR(", "));
-		fprintf_cf(stdout, CFSTR("Variants:             %@\n"), tmp);
-		tmp = CFStringCreateByCombiningStrings(NULL, mp_port_defined_platforms(port), CFSTR(", "));
-		fprintf_cf(stdout, CFSTR("PlatformVariants:     %@\n"), tmp);
-		fprintf_cf(stdout, CFSTR("Brief Description:    %@\n"), mp_port_variable(port, CFSTR("description")));
-		fprintf_cf(stdout, CFSTR("Description:          %@\n"), mp_port_variable(port, CFSTR("long_description")));
-		fprintf_cf(stdout, CFSTR("Homepage:             %@\n"), mp_port_variable(port, CFSTR("homepage")));
-		fprintf_cf(stdout, CFSTR("Build Dependencies:   %@\n"), mp_port_variable(port, CFSTR("depends_build")));
-		fprintf_cf(stdout, CFSTR("Library Dependencies: %@\n"), mp_port_variable(port, CFSTR("depends_lib")));
-		fprintf_cf(stdout, CFSTR("Platforms:            %@\n"), mp_port_variable(port, CFSTR("platforms")));
-		fprintf_cf(stdout, CFSTR("Maintainers:          %@\n"), mp_port_variable(port, CFSTR("maintainers")));
+		CFRelease(url);
+		CFRelease(path);
+
+		tmp1 = mp_port_variable(port, CFSTR("name"));
+		tmp2 = mp_port_variable(port, CFSTR("version"));
+		tmp3 = mp_port_variable(port, CFSTR("categories"));
+		fprintf_cf(stdout, CFSTR("%@ @%@ (%@)\n"), tmp1, tmp2, tmp3);
+		CFRelease(tmp1); CFRelease(tmp2); CFRelease(tmp3);
+
+		tmp1 = mp_port_defined_variants(port);
+		tmp2 = CFStringCreateByCombiningStrings(NULL, tmp1, CFSTR(", "));
+		fprintf_cf(stdout, CFSTR("Variants:             %@\n"), tmp2);
+		CFRelease(tmp1); CFRelease(tmp2);
+
+		tmp1 = mp_port_defined_platforms(port);
+		tmp2 = CFStringCreateByCombiningStrings(NULL, tmp1, CFSTR(", "));
+		fprintf_cf(stdout, CFSTR("PlatformVariants:     %@\n"), tmp2);
+		CFRelease(tmp1); CFRelease(tmp2);
+
+		tmp1 = mp_port_variable(port, CFSTR("description"));
+		fprintf_cf(stdout, CFSTR("Brief Description:    %@\n"), tmp1);
+		CFRelease(tmp1);
+
+		tmp1 = mp_port_variable(port, CFSTR("long_description"));
+		fprintf_cf(stdout, CFSTR("Description:          %@\n"), tmp1);
+		CFRelease(tmp1);
+		
+		tmp1 = mp_port_variable(port, CFSTR("homepage"));
+		fprintf_cf(stdout, CFSTR("Homepage:             %@\n"), tmp1);
+		CFRelease(tmp1);
+		
+		tmp1 = mp_port_variable(port, CFSTR("depends_build"));
+		fprintf_cf(stdout, CFSTR("Build Dependencies:   %@\n"), tmp1);
+		CFRelease(tmp1);
+		
+		tmp1 = mp_port_variable(port, CFSTR("depends_lib"));
+		fprintf_cf(stdout, CFSTR("Library Dependencies: %@\n"), tmp1);
+		CFRelease(tmp1);
+		
+		tmp1 = mp_port_variable(port, CFSTR("platforms"));
+		fprintf_cf(stdout, CFSTR("Platforms:            %@\n"), tmp1);
+		CFRelease(tmp1);
+
+		tmp1 = mp_port_variable(port, CFSTR("maintainers"));
+		fprintf_cf(stdout, CFSTR("Maintainers:          %@\n"), tmp1);
+		CFRelease(tmp1);
+
 		mp_port_destroy(port);
 	}
 }

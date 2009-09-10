@@ -116,6 +116,8 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 	// XXX: etc?
 
 	do {
+		CFArrayRef tmparr;
+
 		Tcl_Preserve(port->_interp);
 		
 		Tcl_CreateObjCommand(port->_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
@@ -126,7 +128,8 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 		command_create(port->_interp, "platform", port);
 		command_create(port->_interp, "variant", port);
 
-		CFArrayApplyBlock2(mp_port_targets(port), ^(const void *target) {
+		tmparr = mp_port_targets(port);
+		CFArrayApplyBlock2(tmparr, ^(const void *target) {
 			CFStringRef tmp;
 			char *s;
 
@@ -146,14 +149,18 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 			free(s);
 			CFRelease(tmp);
 		});
+		CFRelease(tmparr);
 
-		CFArrayApplyBlock2(mp_port_settable_variables(port), ^(const void *opt) {
+		tmparr = mp_port_settable_variables(port);
+		CFArrayApplyBlock2(tmparr, ^(const void *opt) {
 			char *s = strdup_cf(opt);
 			command_create(port->_interp, s, port);
 			free(s);
 		});
+		CFRelease(tmparr);
 
-		CFArrayApplyBlock2(mp_port_settable_array_variables(port), ^(const void *opt) {
+		tmparr = mp_port_settable_array_variables(port);
+		CFArrayApplyBlock2(tmparr, ^(const void *opt) {
 			CFStringRef tmp;
 			char *s;
 
@@ -169,12 +176,15 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 			free(s);
 			CFRelease(tmp);
 		});
+		CFRelease(tmparr);
 		
-		CFArrayApplyBlock2(mp_port_variables(port), ^(const void *var) {
+		tmparr = mp_port_variables(port);
+		CFArrayApplyBlock2(tmparr, ^(const void *var) {
 			char *s = strdup_cf(var);
 			Tcl_TraceVar(port->_interp, s, TCL_TRACE_READS, variable_read, port);
 			free(s);
 		});
+		CFRelease(tmparr);
 		
 		// bogus targets
 		Tcl_CreateObjCommand(port->_interp, "pre-activate", _nslog, NULL, NULL); // XXX: debugging
@@ -200,11 +210,14 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 		// variables that should be constant
 		Tcl_CreateObjCommand(port->_interp, "prefix", _nslog, NULL, NULL);
 		
-		char *s = strdup_cf(mp_port_portfile(port));
+		CFStringRef pf = mp_port_portfile(port);
+		char *s = strdup_cf(pf);
 		if (Tcl_EvalFile(port->_interp, s) != TCL_OK) {
 			fprintf(stderr, "Tcl_EvalFile(): %s\n", Tcl_GetStringResult(port->_interp));
 			exit(1);
 		}
+		free(s);
+		CFRelease(pf);
 		
 		Tcl_Release(port->_interp);
 	} while (0);
@@ -235,7 +248,8 @@ mp_port_variable(mp_port_t port, CFStringRef name)
 	CFTypeRef setValue;
 	CFTypeRef defValue;
 	CFTypeRef callback;
-	CFStringRef ret = nil;
+	CFStringRef ret;
+	CFStringRef subst = NULL;
 	
 	info = CFDictionaryGetValue(port->_variableInfo, name);
 	if (info != NULL) {
@@ -258,20 +272,24 @@ mp_port_variable(mp_port_t port, CFStringRef name)
 			ret = CFSTR("");
 		}
 		char *s = strdup_cf(ret);
-		ret = CFStringCreateWithTclObject(NULL, Tcl_SubstObj(port->_interp, Tcl_NewStringObj(s, -1), TCL_SUBST_VARIABLES));
+		subst = CFStringCreateWithTclObject(NULL, Tcl_SubstObj(port->_interp, Tcl_NewStringObj(s, -1), TCL_SUBST_VARIABLES));
 		free(s);
+		CFRelease(ret);
 	} else {
 		fprintf_cf(stderr, CFSTR("WARNING: unknown variable %@\n"), name);
 	}
-	return ret;
+	return subst;
 }
 
 CFStringRef
 mp_port_portfile(mp_port_t port)
 {
 	CFStringRef path;
+	CFStringRef pf;
 	path = CFURLCopyStrictPath(port->_url, NULL);
-	return CFStringCreateWithFormat(NULL, NULL, CFSTR("/%@/Portfile"), path);
+	pf = CFStringCreateWithFormat(NULL, NULL, CFSTR("/%@/Portfile"), path);
+	CFRelease(path);
+	return pf;
 }
 
 CFArrayRef
@@ -296,15 +314,23 @@ static Boolean
 mp_port_is_target(mp_port_t port, CFStringRef target)
 {
 	CFArrayRef tmp;
+	Boolean result;
 
 	if (CFStringHasPrefix(target, CFSTR("pre-"))) {
 		target = CFStringCreateWithSubstring(NULL, target, CFRangeMake(4, CFStringGetLength(target) - 4));
 	} else if (CFStringHasPrefix(target, CFSTR("post-"))) {
 		target = CFStringCreateWithSubstring(NULL, target, CFRangeMake(5, CFStringGetLength(target) - 5));
+	} else {
+		target = CFRetain(target);
 	}
 
 	tmp = mp_port_targets(port);
-	return CFArrayContainsValue(tmp, CFRangeMake(0, CFArrayGetCount(tmp)), target);
+	result = CFArrayContainsValue(tmp, CFRangeMake(0, CFArrayGetCount(tmp)), target);
+	CFRelease(tmp);
+
+	CFRelease(target);
+
+	return result;
 }
 
 CFArrayRef
@@ -333,7 +359,9 @@ CFArrayRef
 mp_port_settable_variables(mp_port_t port)
 {
 	CFMutableArrayRef ret = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-	CFArrayApplyBlock2(mp_port_variables(port), ^(const void *var) {
+	CFArrayRef vars;
+	vars = mp_port_variables(port);
+	CFArrayApplyBlock2(vars, ^(const void *var) {
 		CFNumberRef constant = CFDictionaryGetValue(CFDictionaryGetValue(port->_variableInfo, var), kPortVariableConstant);
 		CFIndex b = 0;
 		if (constant) CFNumberGetValue(constant, kCFNumberCFIndexType, &b);
@@ -342,6 +370,7 @@ mp_port_settable_variables(mp_port_t port)
 			CFArrayAppendValue(ret, var);
 		}
 	});
+	CFRelease(vars);
 	return ret;
 }
 
@@ -349,11 +378,14 @@ CFArrayRef
 mp_port_settable_array_variables(mp_port_t port)
 {
 	CFMutableArrayRef ret = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
-	CFArrayApplyBlock2(mp_port_settable_variables(port), ^(const void *var) {
+	CFArrayRef vars;
+	vars = mp_port_settable_variables(port);
+	CFArrayApplyBlock2(vars, ^(const void *var) {
 		if (mp_port_variable_is_array(port, var)) {
 			CFArrayAppendValue(ret, var);
 		}
 	});
+	CFRelease(vars);
 	return ret;
 }
 
@@ -426,6 +458,7 @@ mp_port_test_and_record_platform(mp_port_t port, CFArrayRef platform)
 	CFStringRef release;
 	CFStringRef arch;
 	CFTypeRef tmp;
+	Boolean result = TRUE;
 	
 	CFArrayAppendValue(port->_platforms, platform);
 	
@@ -436,20 +469,24 @@ mp_port_test_and_record_platform(mp_port_t port, CFArrayRef platform)
 	
 	tmp = CFArrayGetValueAtIndex(platform, 0);
 	if (tmp != kCFNull && CFStringCompare(tmp, os, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
-		return FALSE;
+		result = FALSE;
 	}
 	
 	tmp = CFArrayGetValueAtIndex(platform, 1);
 	if (tmp != kCFNull && CFStringCompare(tmp, release, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
-		return FALSE;
+		result = FALSE;
 	}
 	
 	tmp = CFArrayGetValueAtIndex(platform, 2);
 	if (tmp != kCFNull && CFStringCompare(tmp, arch, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
-		return FALSE;
+		result = FALSE;
 	}
 	
-	return TRUE;
+	CFRelease(os);
+	CFRelease(release);
+	CFRelease(arch);
+
+	return result;
 }
 
 CFArrayRef
@@ -519,12 +556,14 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 		CFArrayAppendValue(platform, os);
 		CFArrayAppendValue(platform, release);
 		CFArrayAppendValue(platform, arch);
+		CFRelease(release);
 
 		if (mp_port_test_and_record_platform(port, platform)) {
 			char *s = strdup_cf(CFArrayGetValueAtIndex(args, count - 1));
 			Tcl_Eval(port->_interp, s);
 			free(s);
 		}
+		CFRelease(platform);
 	} else if (CFStringCompare(command, CFSTR("variant"), 0) == kCFCompareEqualTo) {
 		CFStringRef name;
 		CFMutableDictionaryRef props;
@@ -549,6 +588,8 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 			Tcl_Eval(port->_interp, s);
 			free(s);
 		}
+
+		CFRelease(props);
 	} else if (mp_port_is_target(port, command)) {
 		// XXX: store for later use...
 	} else {
@@ -570,8 +611,12 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 		} else {
 			mp_port_variable_set(port, command, foo);
 		}
+
+		CFRelease(foo);
 	}
 }
+
+//
 
 static int
 command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
@@ -609,6 +654,8 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 	s = strdup_cf(var);
 	Tcl_SetVar2(interp, name1, name2, s, 0);
 	free(s);
+
+	CFRelease(var);
 
 	return NULL;
 }
