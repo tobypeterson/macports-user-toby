@@ -6,6 +6,7 @@
 #include "MPPort.h"
 #include "MPArrayAdditions.h"
 #include "MPStringAdditions.h"
+#include "internal.h"
 
 static NSString *kPortVariableType = @"Type";
 static NSString *kPortVariableConstant = @"Constant";
@@ -408,11 +409,15 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	return YES;
 }
 
-- (void)performCommand:(NSString *)command arguments:(NSArray *)args
+- (void)performCommand:(NSArray *)args
 {
+	NSString *command;
+
+	command = [args objectAtIndex:0];
+
 	if ([command isEqualToString:@"PortSystem"]) {
-		assert([args count] == 1);
-		assert([[args objectAtIndex:0] isEqualToString:@"1.0"]);
+		assert([args count] == 2);
+		assert([[args objectAtIndex:1] isEqualToString:@"1.0"]);
 	} else if ([command isEqualToString:@"PortGroup"]) {
 		NSLog(@"ignoring %@, grps r hard m'kay", command);
 		// XXX: this should probably set some state in parent port instance
@@ -423,23 +428,23 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		id release = [NSNull null];
 		id arch = [NSNull null];
 		
-		if (count < 2 || count > 4) {
+		if (count < 3 || count > 5) {
 			NSLog(@"bogus platform declaration");
 			return;
 		}
 		
-		os = [args objectAtIndex:0];
+		os = [args objectAtIndex:1];
 		
-		if (count == 3) {
-			NSInteger rel = [[args objectAtIndex:1] integerValue];
+		if (count == 4) {
+			NSInteger rel = [[args objectAtIndex:2] integerValue];
 			if (rel != 0) {
 				release = [NSNumber numberWithInteger:rel];
 			} else {
-				arch = [args objectAtIndex:1];
+				arch = [args objectAtIndex:2];
 			}
-		} else if (count == 4) {
-			release = [NSNumber numberWithInteger:[[args objectAtIndex:1] integerValue]];
-			arch = [args objectAtIndex:2];
+		} else if (count == 5) {
+			release = [NSNumber numberWithInteger:[[args objectAtIndex:2] integerValue]];
+			arch = [args objectAtIndex:3];
 		}
 		
 		if ([self testAndRecordPlatform:[NSArray arrayWithObjects:os, release, arch, nil]]) {
@@ -452,16 +457,16 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 		NSUInteger i;
 		
 		// variant name [a b c d] {}
-		if (count < 2 || count % 2) {
+		if (count < 3) {
 			NSLog(@"bogus variant declaration");
 			return;
 		}
 		
-		name = [args objectAtIndex:0];
+		name = [args objectAtIndex:1];
 		
 		// this isn't quite right, conflicts can take multiple "arguments"
 		props = [NSMutableDictionary dictionaryWithCapacity:count-2];
- 		for (i = 1; i < count - 1; i += 2) {
+ 		for (i = 2; i < count - 1; i += 2) {
 			[props setObject:[args objectAtIndex:i+1] forKey:[args objectAtIndex:i]];
 		}
 		
@@ -471,12 +476,13 @@ static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tc
 	} else if ([self isTarget:command]) {
 		// XXX: store for later use...
 	} else {
+		NSArray *foo = [args subarrayWithRange:NSMakeRange(1, [args count] - 1)];
 		if ([command hasSuffix:@"-append"]) {
-			[self variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] append:args];
+			[self variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] append:foo];
 		} else if ([command hasSuffix:@"-delete"]) {
-			[self variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] delete:args];
+			[self variable:[command substringWithRange:NSMakeRange(0, [command length] - 7)] delete:foo];
 		} else {
-			[self variable:command set:args];
+			[self variable:command set:foo];
 		}
 	}
 }
@@ -487,7 +493,7 @@ static int
 command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
 {
 	CFArrayRef args = CFArrayCreateWithTclObjects(NULL, objv, objc);
-	[(MPPort *)clientData performCommand:[(NSArray *)args objectAtIndex:0] arguments:[(NSArray *)args subarrayWithRange:NSMakeRange(1, [(NSArray *)args count] - 1)]];
+	[(MPPort *)clientData performCommand:(NSArray *)args];
 	CFRelease(args);
 	
 	return TCL_OK;
@@ -498,7 +504,7 @@ command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
 {
 	Tcl_CmdInfo info;
 	if (Tcl_GetCommandInfo(interp, cmdName, &info) != 0) {
-		NSLog(@"Command '%s' already exists, bailing.", cmdName);
+		fprintf(stderr, "Command '%s' already exists, bailing.", cmdName);
 		abort();
 	}
 	Tcl_CreateObjCommand(interp, cmdName, command_trampoline, clientData, NULL);
@@ -507,11 +513,19 @@ command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
 static char *
 variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
 {
-	NSString *var;
+	CFStringRef tmp, var;
+	char *s;
 
-	var = [(MPPort *)clientData variable:[NSString stringWithUTF8String:name1]];
+	tmp = CFStringCreateWithCString(NULL, name1, kCFStringEncodingUTF8);
+	var = (CFStringRef)[(MPPort *)clientData variable:(NSString *)tmp];
+	CFRelease(tmp);
+
 	assert(var != nil);
-	Tcl_SetVar2(interp, name1, name2, [var UTF8String], 0);
+
+	s = strdup_cf(var);
+	Tcl_SetVar2(interp, name1, name2, s, 0);
+	free(s);
+
 	return NULL;
 }
 
