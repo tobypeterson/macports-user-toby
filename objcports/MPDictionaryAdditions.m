@@ -4,31 +4,28 @@
 #include "MPDictionaryAdditions.h"
 #include "MPStringAdditions.h"
 
-@implementation NSDictionary (MPDictionaryAdditions)
-
-- (id)initWithTclObjects:(Tcl_Obj * const *)objects count:(int)count
+CFDictionaryRef
+CFDictionaryCreateWithTclObjects(CFAllocatorRef allocator, Tcl_Obj **objects, CFIndex count)
 {
-	int count2, i;
-	NSDictionary *result;
+	CFIndex count2, i;
+	CFDictionaryRef result;
 
 	if ((count % 2) != 0) {
 		return nil;
 	}
 
 	count2 = count / 2;
-
-	NSString *keys[count2];
-	NSString *objs[count2];
+	
+	const void *keys[count2];
+	const void *values[count2];
 	for (i = 0; i < count2; i++) {
-		keys[i] = [[NSString alloc] initWithTclObject:objects[i * 2]];
-		objs[i] = [[NSString alloc] initWithTclObject:objects[i * 2 + 1]];
+		keys[i] = CFStringCreateWithTclObject(allocator, objects[i * 2]);
+		values[i] = CFStringCreateWithTclObject(allocator, objects[i * 2 + 1]);
 	}
-	result = [self initWithObjects:objs forKeys:keys count:count2];
+	result = CFDictionaryCreate(allocator, keys, values, count2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 	for (i = 0; i < count2; i++) {
-		[keys[i] release];
-		[objs[i] release];
+		CFRelease(keys[i]);
+		CFRelease(values[i]);
 	}
 	return result;
 }
-
-@end

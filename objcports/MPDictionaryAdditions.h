@@ -1,3 +1,1 @@
-@interface NSDictionary (MPDictionaryAdditions)
-- (id)initWithTclObjects:(Tcl_Obj * const *)objects count:(int)count;
-@end
+CFDictionaryRef CFDictionaryCreateWithTclObjects(CFAllocatorRef allocator, Tcl_Obj **objects, CFIndex count);
