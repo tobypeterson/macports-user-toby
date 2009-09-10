@@ -1,34 +1,39 @@
 #include <Foundation/Foundation.h>
 #include <tcl.h>
 
+#include "MPConfig.h"
 #include "MPIndex.h"
 #include "MPPort.h"
-#include "MPConfig.h"
 
-int
-main(int argc, char *argv[])
+static void
+do_showconfig()
 {
-#if 0
-	CFDictionaryRef config = MPCopyConfig();
+	CFDictionaryRef config;
+
+	config = MPCopyConfig();
 	CFShow(config);
 	CFRelease(config);
-	return 0;
-#endif
+}
 
-	if (argc < 2)
-		exit(1);
+static void
+do_showindex(char *f)
+{
+	CFStringRef filename;
+	CFDictionaryRef index;
 
-#if 0
-	CFStringRef filename = CFStringCreateWithCString(NULL, argv[1], kCFStringEncodingUTF8);
-	CFDictionaryRef index = MPCopyPortIndex(filename);
+	filename = CFStringCreateWithCString(NULL, f, kCFStringEncodingUTF8);
+	index = MPCopyPortIndex(filename);
 	CFShow(index);
 	CFRelease(index);
 	CFRelease(filename);
-	return 0;
-#endif
+}
 
+static void
+do_info(int argc, char *argv[])
+{
+	printf("%d\n", argc);
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
-	
+
 	while (--argc) {
 		MPPort *port = [[MPPort alloc] initWithPath:[NSString stringWithUTF8String:*++argv] options:nil];
 		NSLog(@"%@ @%@ (%@)", [port variable:@"name"], [port variable:@"version"], [port variable:@"categories"]);
@@ -45,5 +50,27 @@ main(int argc, char *argv[])
 	}
 
 	[pool release];
+}
+
+int
+main(int argc, char *argv[])
+{
+
+	if (argc < 2)
+		exit(1);
+
+	if (!strcmp(argv[1], "showconfig")) {
+		do_showconfig();
+	} else {
+		if (argc < 3)
+			exit(1);
+
+		if (!strcmp(argv[1], "showindex")) {
+			do_showindex(argv[2]);
+		} else {
+			do_info(argc - 1, argv + 1);
+		}
+	}
+
 	return 0;
 }
