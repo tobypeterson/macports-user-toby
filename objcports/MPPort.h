@@ -1,21 +1,7 @@
-@class MPParser;
+typedef struct mp_port_s *mp_port_t;
 
-@interface MPPort : NSObject
-{
-	NSURL *_url;
-
-	NSMutableDictionary *_variableInfo;
-	NSMutableDictionary *_variables;
-
-	NSMutableArray *_platforms;
-	NSMutableDictionary *_variants;
-
-	Tcl_Interp *_interp;
-}
-
-- (id)initWithPath:(NSString *)url options:(NSDictionary *)options;
-- (NSString *)variable:(NSString *)name;
-- (NSArray *)definedVariants;
-- (NSArray *)definedPlatforms;
-
-@end
+mp_port_t mp_port_create(CFURLRef url, CFDictionaryRef options);
+void mp_port_destroy(mp_port_t port);
+CFStringRef mp_port_variable(mp_port_t port, CFStringRef var);
+CFArrayRef mp_port_defined_variants(mp_port_t port);
+CFArrayRef mp_port_defined_platforms(mp_port_t port);

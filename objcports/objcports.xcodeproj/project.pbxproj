@@ -12,9 +12,9 @@
 		DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = DA7AF1BB1058D1E200CF2187 /* internal.c */; };
 		DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.c */; };
 		DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.c */; };
-		DAD371710F0280EF0064AFF4 /* port.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.m */; };
+		DAD371710F0280EF0064AFF4 /* port.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.c */; };
 		DAD371720F0280EF0064AFF4 /* MPArrayAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */; };
-		DAD371740F0280EF0064AFF4 /* MPPort.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716E0F0280EF0064AFF4 /* MPPort.m */; };
+		DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716E0F0280EF0064AFF4 /* MPPort.c */; };
 		DAD371750F0280EF0064AFF4 /* MPStringAdditions.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */; };
 		DAD371950F0281940064AFF4 /* libtcl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DAD371940F0281940064AFF4 /* libtcl.dylib */; };
 /* End PBXBuildFile section */
@@ -42,11 +42,11 @@
 		DA96BECF0F7C9C2500362779 /* MPIndex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPIndex.c; sourceTree = "<group>"; };
 		DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPDictionaryAdditions.h; sourceTree = "<group>"; };
 		DA96BF4B0F7CA1A700362779 /* MPDictionaryAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPDictionaryAdditions.c; sourceTree = "<group>"; };
-		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
+		DAD371680F0280EF0064AFF4 /* port.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = port.c; sourceTree = "<group>"; };
 		DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPArrayAdditions.h; sourceTree = "<group>"; };
 		DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPArrayAdditions.c; sourceTree = "<group>"; };
 		DAD3716D0F0280EF0064AFF4 /* MPPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPort.h; sourceTree = "<group>"; };
-		DAD3716E0F0280EF0064AFF4 /* MPPort.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPPort.m; sourceTree = "<group>"; };
+		DAD3716E0F0280EF0064AFF4 /* MPPort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPPort.c; sourceTree = "<group>"; };
 		DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPStringAdditions.h; sourceTree = "<group>"; };
 		DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPStringAdditions.c; sourceTree = "<group>"; };
 		DAD371940F0281940064AFF4 /* libtcl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtcl.dylib; path = /usr/lib/libtcl.dylib; sourceTree = "<absolute>"; };
@@ -80,7 +80,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				DAD371680F0280EF0064AFF4 /* port.m */,
+				DAD371680F0280EF0064AFF4 /* port.c */,
 				DAD371690F0280EF0064AFF4 /* MPArrayAdditions.h */,
 				DAD3716A0F0280EF0064AFF4 /* MPArrayAdditions.c */,
 				DA96BF4A0F7CA1A700362779 /* MPDictionaryAdditions.h */,
@@ -88,7 +88,7 @@
 				DA96BECE0F7C9C2500362779 /* MPIndex.h */,
 				DA96BECF0F7C9C2500362779 /* MPIndex.c */,
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
-				DAD3716E0F0280EF0064AFF4 /* MPPort.m */,
+				DAD3716E0F0280EF0064AFF4 /* MPPort.c */,
 				DAD3716F0F0280EF0064AFF4 /* MPStringAdditions.h */,
 				DAD371700F0280EF0064AFF4 /* MPStringAdditions.c */,
 				DA138879101AED7000F73A82 /* MPConfig.h */,
@@ -167,11 +167,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
+				DAD371710F0280EF0064AFF4 /* port.c in Sources */,
 				DAD371720F0280EF0064AFF4 /* MPArrayAdditions.c in Sources */,
 				DAD371750F0280EF0064AFF4 /* MPStringAdditions.c in Sources */,
 				DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */,
-				DAD371740F0280EF0064AFF4 /* MPPort.m in Sources */,
+				DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */,
 				DA96BF4C0F7CA1A700362779 /* MPDictionaryAdditions.c in Sources */,
 				DA13887B101AED7000F73A82 /* MPConfig.c in Sources */,
 				DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */,
@@ -201,7 +201,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
