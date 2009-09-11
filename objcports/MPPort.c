@@ -26,6 +26,7 @@ static CFStringRef kPortVariableDefault = CFSTR("Default");
 static CFStringRef kPortVariableCallback = CFSTR("Callback");
 
 static void command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData);
+static void command_create_cf(Tcl_Interp *interp, CFStringRef cmdName, ClientData clientData);
 static char *variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags);
 static int _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
 static int _fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[]);
@@ -131,49 +132,35 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 		tmparr = mp_port_targets(port);
 		CFArrayApplyBlock2(tmparr, ^(const void *target) {
 			CFStringRef tmp;
-			char *s;
 
-			s = strdup_cf(target);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, target, port);
 
 			tmp = CFStringCreateWithFormat(NULL, NULL, CFSTR("pre-%@"), target);
-			s = strdup_cf(tmp);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, tmp, port);
 			CFRelease(tmp);
 
 			tmp = CFStringCreateWithFormat(NULL, NULL, CFSTR("post-%@"), target);
-			s = strdup_cf(tmp);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, tmp, port);
 			CFRelease(tmp);
 		});
 		CFRelease(tmparr);
 
 		tmparr = mp_port_settable_variables(port);
 		CFArrayApplyBlock2(tmparr, ^(const void *opt) {
-			char *s = strdup_cf(opt);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, opt, port);
 		});
 		CFRelease(tmparr);
 
 		tmparr = mp_port_settable_array_variables(port);
 		CFArrayApplyBlock2(tmparr, ^(const void *opt) {
 			CFStringRef tmp;
-			char *s;
 
 			tmp = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@-append"), opt);
-			s = strdup_cf(tmp);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, tmp, port);
 			CFRelease(tmp);
 
 			tmp = CFStringCreateWithFormat(NULL, NULL, CFSTR("%@-delete"), opt);
-			s = strdup_cf(tmp);
-			command_create(port->_interp, s, port);
-			free(s);
+			command_create_cf(port->_interp, tmp, port);
 			CFRelease(tmp);
 		});
 		CFRelease(tmparr);
@@ -637,6 +624,14 @@ command_create(Tcl_Interp *interp, const char *cmdName, ClientData clientData)
 		abort();
 	}
 	Tcl_CreateObjCommand(interp, cmdName, command_trampoline, clientData, NULL);
+}
+
+static void
+command_create_cf(Tcl_Interp *interp, CFStringRef cmdName, ClientData clientData)
+{
+	char *s = strdup_cf(cmdName);
+	command_create(interp, s, clientData);
+	free(s);
 }
 
 static char *
