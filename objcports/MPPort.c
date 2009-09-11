@@ -4,8 +4,7 @@
 #include <mach-o/getsect.h>
 
 #include "MPPort.h"
-#include "MPArrayAdditions.h"
-#include "MPStringAdditions.h"
+#include "cftcl.h"
 #include "internal.h"
 
 struct mp_port_s {

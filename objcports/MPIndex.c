@@ -2,9 +2,7 @@
 #include <tcl.h>
 
 #include "MPIndex.h"
-#include "MPArrayAdditions.h"
-#include "MPDictionaryAdditions.h"
-#include "MPStringAdditions.h"
+#include "cftcl.h"
 #include "internal.h"
 
 CFDictionaryRef
