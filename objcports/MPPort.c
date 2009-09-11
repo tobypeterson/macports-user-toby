@@ -38,6 +38,15 @@ static CFArrayRef mp_port_settable_array_variables(mp_port_t);
 
 static Boolean mp_port_variable_is_array(mp_port_t, CFStringRef var);
 
+void mp_port_variable_set(mp_port_t, CFStringRef, CFArrayRef);
+void mp_port_variable_append(mp_port_t, CFStringRef, CFArrayRef);
+void mp_port_variable_delete(mp_port_t, CFStringRef, CFArrayRef);
+
+Boolean mp_port_test_and_record_platform(mp_port_t, CFArrayRef);
+Boolean mp_port_test_and_record_variant(mp_port_t, CFStringRef, CFDictionaryRef);
+
+void mp_port_perform_command(mp_port_t, CFArrayRef);
+
 // essentially 'commands' from portutil.tcl
 static void
 add_command_var(CFMutableDictionaryRef varinfo, CFStringRef command)
