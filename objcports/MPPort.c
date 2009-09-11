@@ -357,11 +357,8 @@ mp_port_settable_variables(mp_port_t port)
 	CFArrayRef vars;
 	vars = mp_port_variables(port);
 	CFArrayApplyBlock2(vars, ^(const void *var) {
-		CFNumberRef constant = CFDictionaryGetValue(CFDictionaryGetValue(port->_variableInfo, var), kPortVariableConstant);
-		CFIndex b = 0;
-		if (constant) CFNumberGetValue(constant, kCFNumberCFIndexType, &b);
-
-		if (constant == NULL || b == 0) {
+		CFBooleanRef constant = CFDictionaryGetValue(CFDictionaryGetValue(port->_variableInfo, var), kPortVariableConstant);
+		if (constant == NULL || constant != kCFBooleanTrue) {
 			CFArrayAppendValue(ret, var);
 		}
 	});

@@ -253,8 +253,6 @@
 		<key>Default</key>
 		<string>unknown</string>
 	</dict>
-	<key>livecheck.check</key>
-	<dict/>
 	<key>livecheck.distname</key>
 	<dict/>
 	<key>livecheck.md5</key>
@@ -262,6 +260,8 @@
 	<key>livecheck.name</key>
 	<dict/>
 	<key>livecheck.regex</key>
+	<dict/>
+	<key>livecheck.type</key>
 	<dict/>
 	<key>livecheck.url</key>
 	<dict/>
