@@ -1,5 +1,4 @@
 #include <CoreFoundation/CoreFoundation.h>
-#include <tcl.h>
 
 #include "MPConfig.h"
 #include "MPIndex.h"
@@ -59,9 +58,7 @@ do_info(int argc, char *argv[])
 		fprintf_cf(stdout, CFSTR("PlatformVariants:     %@\n"), tmp2);
 		CFRelease(tmp1); CFRelease(tmp2);
 
-		tmp1 = mp_port_variable(port, CFSTR("description"));
-		fprintf_cf(stdout, CFSTR("Brief Description:    %@\n"), tmp1);
-		CFRelease(tmp1);
+		fprintf_cf(stdout, CFSTR("\n"));
 
 		tmp1 = mp_port_variable(port, CFSTR("long_description"));
 		fprintf_cf(stdout, CFSTR("Description:          %@\n"), tmp1);
@@ -71,6 +68,8 @@ do_info(int argc, char *argv[])
 		fprintf_cf(stdout, CFSTR("Homepage:             %@\n"), tmp1);
 		CFRelease(tmp1);
 		
+		fprintf_cf(stdout, CFSTR("\n"));
+
 		tmp1 = mp_port_variable(port, CFSTR("depends_build"));
 		fprintf_cf(stdout, CFSTR("Build Dependencies:   %@\n"), tmp1);
 		CFRelease(tmp1);
@@ -81,6 +80,10 @@ do_info(int argc, char *argv[])
 		
 		tmp1 = mp_port_variable(port, CFSTR("platforms"));
 		fprintf_cf(stdout, CFSTR("Platforms:            %@\n"), tmp1);
+		CFRelease(tmp1);
+
+		tmp1 = mp_port_variable(port, CFSTR("license"));
+		fprintf_cf(stdout, CFSTR("License:              %@\n"), tmp1);
 		CFRelease(tmp1);
 
 		tmp1 = mp_port_variable(port, CFSTR("maintainers"));
@@ -111,6 +114,5 @@ main(int argc, char *argv[])
 		}
 	}
 
-	pause();
-	return 0;
+	dispatch_main();
 }
