@@ -1,2 +1,0 @@
-libsdl-devel 233
-variants universal portdir devel/libsdl-devel description . homepage http://www.libsdl.org/ epoch 0 platforms darwin name libsdl-devel maintainers toby long_description ... categories {devel multimedia} version 1.3.0-4563 revision 0
