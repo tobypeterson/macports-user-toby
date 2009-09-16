@@ -79,13 +79,28 @@ add_command_var(CFMutableDictionaryRef varinfo, CFStringRef command)
 	CFRelease(arraydict);
 }
 
+static CFMutableDictionaryRef
+_copy_variable_info(void)
+{
+	char *sectdata;
+	unsigned long sectsize;
+	CFDataRef data;
+	CFMutableDictionaryRef result;
+
+	sectdata = getsectdata("MacPorts", "variables", &sectsize);
+	assert(sectdata);
+
+	data = CFDataCreateWithBytesNoCopy(NULL, (UInt8 *)sectdata, sectsize, kCFAllocatorNull);
+	result = (CFMutableDictionaryRef)CFPropertyListCreateWithData(NULL, data, kCFPropertyListMutableContainersAndLeaves, NULL, NULL);
+	CFRelease(data);
+
+	return result;
+}
+
 mp_port_t
 mp_port_create(CFURLRef url, CFDictionaryRef options)
 {
 	mp_port_t port;
-	char *sectdata;
-	unsigned long sectsize;
-	CFDataRef vdata;
 
 	port = calloc(1, sizeof(struct mp_port_s));
 
@@ -96,11 +111,7 @@ mp_port_create(CFURLRef url, CFDictionaryRef options)
 
 	port->_variables = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 
-	sectdata = getsectdata("MacPorts", "variables", &sectsize);
-	assert(sectdata);
-	vdata = CFDataCreateWithBytesNoCopy(NULL, (UInt8 *)sectdata, sectsize, kCFAllocatorNull);
-	port->_variableInfo = (CFMutableDictionaryRef)CFPropertyListCreateWithData(NULL, vdata, kCFPropertyListMutableContainersAndLeaves, NULL, NULL);
-	CFRelease(vdata);
+	port->_variableInfo = _copy_variable_info();
 
 	add_command_var(port->_variableInfo, CFSTR("cvs")); // portfetch.tcl
 	add_command_var(port->_variableInfo, CFSTR("svn")); // portfetch.tcl

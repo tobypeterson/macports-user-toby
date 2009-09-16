@@ -22,10 +22,11 @@ MPCopyPortIndex(CFStringRef filename)
 	free(fn);
 	Tcl_RegisterChannel(interp, chan);
 
-	while (1) {
+	for (;;) {
 		int objc;
 		Tcl_Obj **objv;
-		const void *key, *value;
+		CFStringRef key;
+		CFDictionaryRef value;
 		CFArrayRef info;
 		Tcl_Obj *line;
 		int len;
