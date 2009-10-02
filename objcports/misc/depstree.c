@@ -28,13 +28,22 @@ CFArrayCreateTcl(CFAllocatorRef allocator, Tcl_Obj **objects, CFIndex count)
 char *
 strdup_cf(CFStringRef str)
 {
+	char *result;
 	CFIndex length, size;
-	char *result = NULL;
 
-	length = CFStringGetLength(str);
-	size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-	result = malloc(size);
-	CFStringGetCString(str, result, size, kCFStringEncodingUTF8);
+	if ((result = CFStringGetCStringPtr(str, kCFStringEncodingUTF8))) {
+		result = strdup(result);
+	} else {
+		length = CFStringGetLength(str);
+		size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+		result = malloc(size);
+		if (result) {
+			if (!CFStringGetCString(str, result, size, kCFStringEncodingUTF8)) {
+				free(result);
+				result = NULL;
+			}
+		}
+	}
 
 	return result;
 }
@@ -194,6 +203,7 @@ create_port_tree(CFStringRef port)
 	context.info = (void *)port;
 	context.retain = CFRetain;
 	context.release = CFRelease;
+	context.copyDescription = CFCopyDescription;
 	tree = CFTreeCreate(NULL, &context);
 
 	deps = find_deps(port);
@@ -208,27 +218,37 @@ create_port_tree(CFStringRef port)
 	return tree;
 }
 
-static void
-dump_tree(CFTreeRef tree, CFIndex indent)
+// percentage of nodes to visit before the root
+typedef enum {
+	TRAVERSE_PREORDER = 0,
+	TRAVERSE_INORDER = 50,
+	TRAVERSE_POSTORDER = 100,
+} traverse_method_t;
+
+typedef void (^traverse_handler_t)(CFTreeRef tree, CFIndex level, Boolean *stop);
+
+Boolean
+traverse_tree(CFTreeRef tree, traverse_method_t method, CFIndex level, traverse_handler_t handler)
 {
-	CFIndex i, count;
-	CFMutableStringRef output;
-	CFTreeContext context;
+	CFIndex i, count = CFTreeGetChildCount(tree), cutoff = (count * method) / 100;
+	CFTreeRef children[count];
+	Boolean stop = FALSE;
 
-	output = CFStringCreateMutable(NULL, 0);
-	for (i = 0; i < indent; i++) {
-		CFStringAppend(output, CFSTR("  "));
+	CFTreeGetChildren(tree, children);
+
+	for (i = 0; i < cutoff; i++) {
+		stop = traverse_tree(children[i], method, level + 1, handler);
+		if (stop) break;
+	}
+	if (!stop) handler(tree, level, &stop);
+	if (!stop) {
+		for (i = cutoff; i < count; i++) {
+			stop = traverse_tree(children[i], method, level + 1, handler);
+			if (stop) break;
+		}
 	}
 
-	CFTreeGetContext(tree, &context);
-	CFStringAppend(output, context.info);
-	fprintf_cf(stdout, indent ? CFSTR("%@\n") : CFSTR("Dependencies of %@:\n"), output);
-	CFRelease(output);
-
-	count = CFTreeGetChildCount(tree);
-	for (i = 0; i < count; i++) {
-		dump_tree(CFTreeGetChildAtIndex(tree, i), indent + 1);
-	}
+	return stop;
 }
 
 static void __dead2
@@ -238,12 +258,110 @@ usage(void)
 	exit(1);
 }
 
+void
+print_deps(CFTreeRef root)
+{
+	traverse_tree(root, TRAVERSE_PREORDER, 0,
+		^(CFTreeRef tree, CFIndex level, Boolean *stop __unused) {
+			CFIndex i;
+			CFMutableStringRef output;
+			CFTreeContext context;
+
+			output = CFStringCreateMutable(NULL, 0);
+			for (i = 0; i < level; i++) {
+				CFStringAppend(output, CFSTR("  "));
+			}
+
+			CFTreeGetContext(tree, &context);
+			CFStringAppend(output, context.info);
+			fprintf_cf(stdout, level ? CFSTR("%@\n") : CFSTR("Dependencies of %@:\n"), output);
+			CFRelease(output);
+		}
+	);
+}
+
+void
+build_port(CFTreeRef root, long jobs)
+{
+	dispatch_semaphore_t sema;
+	dispatch_queue_t queue;
+	dispatch_queue_t print_queue;
+	CFMutableArrayRef working;
+	__block int done = 0;
+	__block CFStringRef port;
+	CFStringRef tmp;
+
+	// TODO: synchronize access to this
+	working = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+
+	sema = dispatch_semaphore_create(jobs);
+	queue = dispatch_queue_create("lame queue", NULL);
+	print_queue = dispatch_queue_create("CFShow", NULL);
+
+	for (;;) {
+		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+
+		port = NULL;
+		fprintf(stderr, "... find next\n");
+		traverse_tree(root, TRAVERSE_POSTORDER, 0,
+			^(CFTreeRef tree, CFIndex level __unused, Boolean *stop) {
+				CFTreeContext context;
+				__block int skip = 0;
+
+				CFTreeGetContext(tree, &context);
+
+				dispatch_sync(queue, ^{
+					if (CFArrayContainsValue(working, CFRangeMake(0, CFArrayGetCount(working)), context.info)) {
+						fprintf_cf(stderr, CFSTR("skip %@ (in progress / already built)\n"), context.info);
+						skip = 1;
+					}
+					if (CFTreeGetChildCount(tree)) {
+						fprintf_cf(stderr, CFSTR("skip %@ (blocked)\n"), context.info);
+						skip = 1;
+					}
+					if (!skip) {
+						fprintf_cf(stderr, CFSTR("+++ build %@\n"), context.info);
+						CFArrayAppendValue(working, context.info);
+						port = CFStringCreateCopy(NULL, context.info);
+						*stop = 1;
+					}
+				});
+			}
+		);
+
+		if (port) {
+			tmp = CFStringCreateCopy(NULL, port);
+			dispatch_async(dispatch_get_global_queue(0, 0), ^{
+				fprintf_cf(stderr, CFSTR("start %@\n"), tmp);
+				sleep(2);
+				fprintf_cf(stderr, CFSTR("done %@\n"), tmp);
+				dispatch_sync(queue, ^{
+					traverse_tree(root, TRAVERSE_POSTORDER, 0,
+						^(CFTreeRef xtree, CFIndex xlevel __unused, Boolean *xstop __unused) {
+							CFTreeContext xcontext;
+							CFTreeGetContext(xtree, &xcontext);
+							if (CFStringCompare(xcontext.info, tmp, 0) == kCFCompareEqualTo) {
+								CFTreeRemove(xtree);
+							}
+						}
+					);
+				});
+				CFRelease(tmp);
+				dispatch_semaphore_signal(sema);
+			});
+		} else {
+			fprintf(stderr, "lost\n");
+		}
+	}
+}
+
 int
 main(int argc, char *argv[])
 {
 	int ch;
 	CFStringRef port;
 	CFTreeRef tree;
+	long jobs;
 
 	while ((ch = getopt(argc, argv, "")) != -1) {
 		switch (ch) {
@@ -256,14 +374,21 @@ main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
-	if (argc != 1) {
+	if (argc < 1) {
 		usage();
 	}
 
 	port = CFStringCreateWithCString(NULL, argv[0], kCFStringEncodingUTF8);
 	tree = create_port_tree(port);
 	CFRelease(port);
-	dump_tree(tree, 0);
+
+	if (argc < 2) {
+		print_deps(tree);
+	} else {
+		jobs = strtol(argv[1], NULL, 0);
+		if (!jobs) jobs = 2;
+		build_port(tree, jobs);
+	}
 	CFRelease(tree);
 
 	return 0;
