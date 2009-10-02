@@ -31,7 +31,7 @@ strdup_cf(CFStringRef str)
 	char *result;
 	CFIndex length, size;
 
-	if ((result = CFStringGetCStringPtr(str, kCFStringEncodingUTF8))) {
+	if ((result = (char *)CFStringGetCStringPtr(str, kCFStringEncodingUTF8))) {
 		result = strdup(result);
 	} else {
 		length = CFStringGetLength(str);
@@ -49,16 +49,20 @@ strdup_cf(CFStringRef str)
 }
 
 int
-fprintf_cf(FILE *stream, CFStringRef format, ...)
+fprintf_cf(FILE *stream, const char *format, ...)
 {
+	CFStringRef formatstr, str;
 	va_list ap;
-	CFStringRef str;
 	char *output;
 	int rc = -1;
 
+	formatstr = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
+
 	va_start(ap, format);
-	str = CFStringCreateWithFormatAndArguments(NULL, NULL, format, ap);
+	str = CFStringCreateWithFormatAndArguments(NULL, NULL, formatstr, ap);
 	va_end(ap);
+
+	CFRelease(formatstr);
 
 	output = strdup_cf(str);
 	CFRelease(str);
@@ -112,7 +116,7 @@ get_portindex()
 
 	interp = Tcl_CreateInterp();
 	assert(Tcl_SetSystemEncoding(interp, "utf-8") == TCL_OK);
-	chan = Tcl_OpenFileChannel(interp, "/Volumes/data/source/macports/dports/PortIndex", "r", 0);
+	chan = Tcl_OpenFileChannel(interp, "/Volumes/eve/macports/dports/PortIndex", "r", 0);
 	Tcl_RegisterChannel(interp, chan);
 
 	while (1) {
@@ -274,79 +278,104 @@ print_deps(CFTreeRef root)
 
 			CFTreeGetContext(tree, &context);
 			CFStringAppend(output, context.info);
-			fprintf_cf(stdout, level ? CFSTR("%@\n") : CFSTR("Dependencies of %@:\n"), output);
+			fprintf_cf(stdout, level ? "%@\n" : "Dependencies of %@:\n", output);
 			CFRelease(output);
 		}
 	);
 }
 
+struct port_context_s {
+	dispatch_queue_t queue;
+	CFTreeRef tree;
+	CFMutableArrayRef working;
+};
+typedef struct port_context_s *port_context_t;
+
+CFStringRef
+find_next(port_context_t portctx)
+{
+	__block CFStringRef result = NULL;
+
+	fprintf(stderr, "... find next\n");
+	traverse_tree(portctx->tree, TRAVERSE_POSTORDER, 0,
+		^(CFTreeRef tree, CFIndex level __unused, Boolean *stop) {
+			CFTreeContext context;
+			__block int skip = 0;
+
+			CFTreeGetContext(tree, &context);
+
+			dispatch_sync(portctx->queue, ^{
+				fprintf_cf(stderr, "trying %@...", context.info);
+				if (CFArrayContainsValue(portctx->working, CFRangeMake(0, CFArrayGetCount(portctx->working)), context.info)) {
+					fprintf_cf(stderr, "skip\n");
+					skip = 1;
+				}
+				if (CFTreeGetChildCount(tree)) {
+					assert(skip == 0);
+					fprintf_cf(stderr, "blocked\n");
+					skip = 1;
+				}
+				if (!skip) {
+					fprintf_cf(stderr, "build!\n");
+					CFArrayAppendValue(portctx->working, context.info);
+					result = CFStringCreateCopy(NULL, context.info);
+					*stop = 1;
+				}
+			});
+		}
+	);
+
+	return result;
+}
+
+void
+finish_port(port_context_t portctx, CFStringRef port)
+{
+	dispatch_sync(portctx->queue, ^{
+		traverse_tree(portctx->tree, TRAVERSE_POSTORDER, 0,
+			^(CFTreeRef tree, CFIndex level __unused, Boolean *stop __unused) {
+				CFTreeContext context;
+				CFTreeGetContext(tree, &context);
+				if (CFStringCompare(context.info, port, 0) == kCFCompareEqualTo) {
+					fprintf_cf(stderr, "removing %@\n", tree);
+					CFTreeRemove(tree);
+				}
+			}
+		);
+	});
+}
+
 void
 build_port(CFTreeRef root, long jobs)
 {
+	port_context_t portctx;
 	dispatch_semaphore_t sema;
-	dispatch_queue_t queue;
 	dispatch_queue_t print_queue;
-	CFMutableArrayRef working;
 	__block int done = 0;
-	__block CFStringRef port;
-	CFStringRef tmp;
+	CFStringRef port;
 
 	// TODO: synchronize access to this
-	working = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
+	portctx = calloc(1, sizeof(*portctx));
+	portctx->queue = dispatch_queue_create("port", NULL);
+	portctx->tree = (CFTreeRef)CFRetain(root);
+	portctx->working = CFArrayCreateMutable(NULL, 0, &kCFTypeArrayCallBacks);
 
 	sema = dispatch_semaphore_create(jobs);
-	queue = dispatch_queue_create("lame queue", NULL);
 	print_queue = dispatch_queue_create("CFShow", NULL);
 
 	for (;;) {
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 
-		port = NULL;
-		fprintf(stderr, "... find next\n");
-		traverse_tree(root, TRAVERSE_POSTORDER, 0,
-			^(CFTreeRef tree, CFIndex level __unused, Boolean *stop) {
-				CFTreeContext context;
-				__block int skip = 0;
-
-				CFTreeGetContext(tree, &context);
-
-				dispatch_sync(queue, ^{
-					if (CFArrayContainsValue(working, CFRangeMake(0, CFArrayGetCount(working)), context.info)) {
-						fprintf_cf(stderr, CFSTR("skip %@ (in progress / already built)\n"), context.info);
-						skip = 1;
-					}
-					if (CFTreeGetChildCount(tree)) {
-						fprintf_cf(stderr, CFSTR("skip %@ (blocked)\n"), context.info);
-						skip = 1;
-					}
-					if (!skip) {
-						fprintf_cf(stderr, CFSTR("+++ build %@\n"), context.info);
-						CFArrayAppendValue(working, context.info);
-						port = CFStringCreateCopy(NULL, context.info);
-						*stop = 1;
-					}
-				});
-			}
-		);
+		port = find_next(portctx);
 
 		if (port) {
-			tmp = CFStringCreateCopy(NULL, port);
 			dispatch_async(dispatch_get_global_queue(0, 0), ^{
-				fprintf_cf(stderr, CFSTR("start %@\n"), tmp);
+				fprintf_cf(stderr, "start %@\n", port);
 				sleep(2);
-				fprintf_cf(stderr, CFSTR("done %@\n"), tmp);
-				dispatch_sync(queue, ^{
-					traverse_tree(root, TRAVERSE_POSTORDER, 0,
-						^(CFTreeRef xtree, CFIndex xlevel __unused, Boolean *xstop __unused) {
-							CFTreeContext xcontext;
-							CFTreeGetContext(xtree, &xcontext);
-							if (CFStringCompare(xcontext.info, tmp, 0) == kCFCompareEqualTo) {
-								CFTreeRemove(xtree);
-							}
-						}
-					);
-				});
-				CFRelease(tmp);
+				fprintf_cf(stderr, "done %@\n", port);
+
+				finish_port(portctx, port);
+				CFRelease(port);
 				dispatch_semaphore_signal(sema);
 			});
 		} else {
