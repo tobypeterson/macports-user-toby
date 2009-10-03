@@ -347,7 +347,6 @@ build_port(CFTreeRef root, long jobs)
 	dispatch_queue_t print_queue;
 	CFStringRef port;
 
-	// TODO: synchronize access to this
 	portctx = calloc(1, sizeof(*portctx));
 	portctx->queue = dispatch_queue_create("port", NULL);
 	portctx->tree = (CFTreeRef)CFRetain(root);
