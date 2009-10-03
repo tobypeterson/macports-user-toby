@@ -282,7 +282,7 @@ mp_port_variable(mp_port_t port, CFStringRef name)
 		free(s);
 		CFRelease(ret);
 	} else {
-		fprintf_cf(stderr, CFSTR("WARNING: unknown variable %@\n"), name);
+		fprintf_cf(stderr, "WARNING: unknown variable %@\n", name);
 	}
 	return subst;
 }
@@ -527,7 +527,7 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 		assert(count == 2);
 		assert(CFStringCompare(CFArrayGetValueAtIndex(args, 1), CFSTR("1.0"), 0) == kCFCompareEqualTo);
 	} else if (CFStringCompare(command, CFSTR("PortGroup"), 0) == kCFCompareEqualTo) {
-		fprintf_cf(stderr, CFSTR("ignoring %@, grps r hard m'kay\n"), command);
+		fprintf_cf(stderr, "ignoring %@, grps r hard m'kay\n", command);
 		// XXX: this should probably set some state in parent port instance
 		// (ugh, more tcl parsing)
 	} else if (CFStringCompare(command, CFSTR("platform"), 0) == kCFCompareEqualTo) {
@@ -660,7 +660,7 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 	var = mp_port_variable(clientData, tmp);
 	CFRelease(tmp);
 
-	assert(var != nil);
+	assert(var);
 
 	s = strdup_cf(var);
 	Tcl_SetVar2(interp, name1, name2, s, 0);

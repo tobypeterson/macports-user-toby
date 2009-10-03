@@ -3,6 +3,7 @@
 #include "MPConfig.h"
 #include "MPIndex.h"
 #include "MPPort.h"
+#include "internal.h"
 
 static void
 do_showconfig()
@@ -21,10 +22,14 @@ do_showindex(char *f)
 	CFDictionaryRef index;
 
 	filename = CFStringCreateWithCString(NULL, f, kCFStringEncodingUTF8);
-	index = MPCopyPortIndex(filename);
-	CFShow(index);
-	CFRelease(index);
-	CFRelease(filename);
+	if (filename) {
+		index = MPCopyPortIndex(filename);
+		CFRelease(filename);
+		if (index) {
+			CFShow(index);
+			CFRelease(index);
+		}
+	}
 }
 
 static void
@@ -45,49 +50,49 @@ do_info(int argc, char *argv[])
 		tmp1 = mp_port_variable(port, CFSTR("name"));
 		tmp2 = mp_port_variable(port, CFSTR("version"));
 		tmp3 = mp_port_variable(port, CFSTR("categories"));
-		fprintf_cf(stdout, CFSTR("%@ @%@ (%@)\n"), tmp1, tmp2, tmp3);
+		fprintf_cf(stdout, "%@ @%@ (%@)\n", tmp1, tmp2, tmp3);
 		CFRelease(tmp1); CFRelease(tmp2); CFRelease(tmp3);
 
 		tmp1 = mp_port_defined_variants(port);
 		tmp2 = CFStringCreateByCombiningStrings(NULL, tmp1, CFSTR(", "));
-		fprintf_cf(stdout, CFSTR("Variants:             %@\n"), tmp2);
+		fprintf_cf(stdout, "Variants:             %@\n", tmp2);
 		CFRelease(tmp1); CFRelease(tmp2);
 
 		tmp1 = mp_port_defined_platforms(port);
 		tmp2 = CFStringCreateByCombiningStrings(NULL, tmp1, CFSTR(", "));
-		fprintf_cf(stdout, CFSTR("PlatformVariants:     %@\n"), tmp2);
+		fprintf_cf(stdout, "PlatformVariants:     %@\n", tmp2);
 		CFRelease(tmp1); CFRelease(tmp2);
 
-		fprintf_cf(stdout, CFSTR("\n"));
+		fprintf_cf(stdout, "\n");
 
 		tmp1 = mp_port_variable(port, CFSTR("long_description"));
-		fprintf_cf(stdout, CFSTR("Description:          %@\n"), tmp1);
+		fprintf_cf(stdout, "Description:          %@\n", tmp1);
 		CFRelease(tmp1);
 		
 		tmp1 = mp_port_variable(port, CFSTR("homepage"));
-		fprintf_cf(stdout, CFSTR("Homepage:             %@\n"), tmp1);
+		fprintf_cf(stdout, "Homepage:             %@\n", tmp1);
 		CFRelease(tmp1);
 		
-		fprintf_cf(stdout, CFSTR("\n"));
+		fprintf_cf(stdout, "\n");
 
 		tmp1 = mp_port_variable(port, CFSTR("depends_build"));
-		fprintf_cf(stdout, CFSTR("Build Dependencies:   %@\n"), tmp1);
+		fprintf_cf(stdout, "Build Dependencies:   %@\n", tmp1);
 		CFRelease(tmp1);
 		
 		tmp1 = mp_port_variable(port, CFSTR("depends_lib"));
-		fprintf_cf(stdout, CFSTR("Library Dependencies: %@\n"), tmp1);
+		fprintf_cf(stdout, "Library Dependencies: %@\n", tmp1);
 		CFRelease(tmp1);
 		
 		tmp1 = mp_port_variable(port, CFSTR("platforms"));
-		fprintf_cf(stdout, CFSTR("Platforms:            %@\n"), tmp1);
+		fprintf_cf(stdout, "Platforms:            %@\n", tmp1);
 		CFRelease(tmp1);
 
 		tmp1 = mp_port_variable(port, CFSTR("license"));
-		fprintf_cf(stdout, CFSTR("License:              %@\n"), tmp1);
+		fprintf_cf(stdout, "License:              %@\n", tmp1);
 		CFRelease(tmp1);
 
 		tmp1 = mp_port_variable(port, CFSTR("maintainers"));
-		fprintf_cf(stdout, CFSTR("Maintainers:          %@\n"), tmp1);
+		fprintf_cf(stdout, "Maintainers:          %@\n", tmp1);
 		CFRelease(tmp1);
 
 		mp_port_destroy(port);

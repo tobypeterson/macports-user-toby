@@ -22,15 +22,17 @@ strdup_cf(CFStringRef str)
 }
 
 int
-fprintf_cf(FILE *stream, CFStringRef format, ...)
+fprintf_cf(FILE *stream, const char *format, ...)
 {
 	va_list ap;
-	CFStringRef str;
+	CFStringRef formatstr, str;
 	char *s;
 	int rc;
 
+	formatstr = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
+	
 	va_start(ap, format);
-	str = CFStringCreateWithFormatAndArguments(NULL, NULL, format, ap);
+	str = CFStringCreateWithFormatAndArguments(NULL, NULL, formatstr, ap);
 	va_end(ap);
 
 	s = strdup_cf(str);
@@ -38,6 +40,7 @@ fprintf_cf(FILE *stream, CFStringRef format, ...)
 	free(s);
 
 	CFRelease(str);
+	CFRelease(formatstr);
 
 	return rc;
 }

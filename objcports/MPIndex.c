@@ -50,7 +50,7 @@ MPCopyPortIndex(CFStringRef filename)
 		Tcl_ReadChars(chan, line, len, 0);
 		Tcl_ListObjGetElements(interp, line, &objc, &objv);
 		value = CFDictionaryCreateWithTclObjects(NULL, objv, objc);
-		assert(value != nil);
+		assert(value);
 
 		/* Store data. */
 		CFDictionarySetValue(result, key, value);

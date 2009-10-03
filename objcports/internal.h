@@ -1,5 +1,5 @@
 char *strdup_cf(CFStringRef str);
-int fprintf_cf(FILE *stream, CFStringRef format, ...);
+int fprintf_cf(FILE *stream, const char *format, ...);
 
 typedef void (^CFArrayApplierBlock)(const void *);
 typedef void (^CFDictionaryApplierBlock)(const void *, const void *);

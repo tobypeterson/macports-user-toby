@@ -33,7 +33,7 @@ CFDictionaryCreateWithTclObjects(CFAllocatorRef allocator, Tcl_Obj **objects, CF
 	CFDictionaryRef result;
 	
 	if ((count % 2) != 0) {
-		return nil;
+		return NULL;
 	}
 	
 	count2 = count / 2;
