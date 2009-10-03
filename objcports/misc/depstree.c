@@ -357,17 +357,25 @@ build_port(CFTreeRef root, long jobs)
 	print_queue = dispatch_queue_create("CFShow", NULL);
 
 	for (;;) {
+		// limit concurrency to jobs
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 
+		// find_next does postorder tree traversal to find the next
+		// "available" port - i.e. a port with no children that isn't
+		// already being built
 		port = find_next(portctx);
 
 		if (port) {
 			dispatch_async(dispatch_get_global_queue(0, 0), ^{
+				// fake build
 				fprintf_cf(stderr, "start %@\n", port);
 				usleep(random() / 1000);
 				fprintf_cf(stderr, "done %@\n", port);
 
+				// finish_port removes all matching ports
+				// from the build tree
 				finish_port(portctx, port);
+
 				CFRelease(port);
 				dispatch_semaphore_signal(sema);
 			});
