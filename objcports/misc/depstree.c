@@ -116,7 +116,7 @@ get_portindex()
 
 	interp = Tcl_CreateInterp();
 	assert(Tcl_SetSystemEncoding(interp, "utf-8") == TCL_OK);
-	chan = Tcl_OpenFileChannel(interp, "/Volumes/eve/macports/dports/PortIndex", "r", 0);
+	chan = Tcl_OpenFileChannel(interp, "/Volumes/data/source/macports/dports/PortIndex", "r", 0);
 	Tcl_RegisterChannel(interp, chan);
 
 	while (1) {
@@ -296,34 +296,29 @@ find_next(port_context_t portctx)
 {
 	__block CFStringRef result = NULL;
 
-	fprintf(stderr, "... find next\n");
-	traverse_tree(portctx->tree, TRAVERSE_POSTORDER, 0,
-		^(CFTreeRef tree, CFIndex level __unused, Boolean *stop) {
-			CFTreeContext context;
-			__block int skip = 0;
+	dispatch_sync(portctx->queue, ^{
+		traverse_tree(portctx->tree, TRAVERSE_POSTORDER, 0,
+			^(CFTreeRef tree, CFIndex level __unused, Boolean *stop) {
+				CFTreeContext context;
+				__block int skip = 0;
 
-			CFTreeGetContext(tree, &context);
+				CFTreeGetContext(tree, &context);
 
-			dispatch_sync(portctx->queue, ^{
-				fprintf_cf(stderr, "trying %@...", context.info);
 				if (CFArrayContainsValue(portctx->working, CFRangeMake(0, CFArrayGetCount(portctx->working)), context.info)) {
-					fprintf_cf(stderr, "skip\n");
 					skip = 1;
 				}
 				if (CFTreeGetChildCount(tree)) {
-					assert(skip == 0);
-					fprintf_cf(stderr, "blocked\n");
+					assert(skip == 0); // just in case
 					skip = 1;
 				}
 				if (!skip) {
-					fprintf_cf(stderr, "build!\n");
 					CFArrayAppendValue(portctx->working, context.info);
 					result = CFStringCreateCopy(NULL, context.info);
 					*stop = 1;
 				}
-			});
-		}
-	);
+			}
+		);
+	});
 
 	return result;
 }
@@ -337,7 +332,6 @@ finish_port(port_context_t portctx, CFStringRef port)
 				CFTreeContext context;
 				CFTreeGetContext(tree, &context);
 				if (CFStringCompare(context.info, port, 0) == kCFCompareEqualTo) {
-					fprintf_cf(stderr, "removing %@\n", tree);
 					CFTreeRemove(tree);
 				}
 			}
@@ -351,7 +345,6 @@ build_port(CFTreeRef root, long jobs)
 	port_context_t portctx;
 	dispatch_semaphore_t sema;
 	dispatch_queue_t print_queue;
-	__block int done = 0;
 	CFStringRef port;
 
 	// TODO: synchronize access to this
@@ -371,7 +364,7 @@ build_port(CFTreeRef root, long jobs)
 		if (port) {
 			dispatch_async(dispatch_get_global_queue(0, 0), ^{
 				fprintf_cf(stderr, "start %@\n", port);
-				sleep(2);
+				usleep(random() / 1000);
 				fprintf_cf(stderr, "done %@\n", port);
 
 				finish_port(portctx, port);
@@ -379,7 +372,7 @@ build_port(CFTreeRef root, long jobs)
 				dispatch_semaphore_signal(sema);
 			});
 		} else {
-			fprintf(stderr, "lost\n");
+			// TODO: figure out a way to "recover concurrency" if we aren't able to find ports to build
 		}
 	}
 }
