@@ -27,7 +27,6 @@ MPCopyPortIndex(CFStringRef filename)
 		Tcl_Obj **objv;
 		CFStringRef key;
 		CFDictionaryRef value;
-		CFArrayRef info;
 		Tcl_Obj *line;
 		int len;
 
@@ -40,11 +39,9 @@ MPCopyPortIndex(CFStringRef filename)
 			break;
 		}
 		Tcl_ListObjGetElements(interp, line, &objc, &objv);
-		info = CFArrayCreateWithTclObjects(NULL, objv, objc);
-		assert(CFArrayGetCount(info) == 2);
-		key = CFRetain(CFArrayGetValueAtIndex(info, 0));
-		len = CFStringGetIntValue(CFArrayGetValueAtIndex(info, 1));
-		CFRelease(info);
+		assert(objc == 2);
+		key = CFStringCreateWithTclObject(NULL, objv[0]);
+		Tcl_GetIntFromObj(interp, objv[1], &len);
 
 		/* Read dictionary. */
 		Tcl_ReadChars(chan, line, len, 0);
