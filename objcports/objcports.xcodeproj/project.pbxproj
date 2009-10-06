@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8DD76F9C0486AA7600D96B5E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* CoreFoundation.framework */; };
 		DA13887B101AED7000F73A82 /* MPConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = DA13887A101AED7000F73A82 /* MPConfig.c */; };
 		DA382DE5105A284E00D9B600 /* cftcl.c in Sources */ = {isa = PBXBuildFile; fileRef = DA382DE4105A284E00D9B600 /* cftcl.c */; };
 		DA382EF0105A2B4900D9B600 /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA382EEF105A2B4900D9B600 /* Tcl.framework */; };
 		DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = DA7AF1BB1058D1E200CF2187 /* internal.c */; };
 		DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.c */; };
-		DAD371710F0280EF0064AFF4 /* port.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.c */; };
+		DAB2118E107B33AB002E931E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2118D107B33AB002E931E /* Foundation.framework */; };
+		DAD371710F0280EF0064AFF4 /* port.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.m */; };
 		DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716E0F0280EF0064AFF4 /* MPPort.c */; };
 /* End PBXBuildFile section */
 
@@ -41,7 +41,8 @@
 		DA7AF1BB1058D1E200CF2187 /* internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = internal.c; sourceTree = "<group>"; };
 		DA96BECE0F7C9C2500362779 /* MPIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPIndex.h; sourceTree = "<group>"; };
 		DA96BECF0F7C9C2500362779 /* MPIndex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPIndex.c; sourceTree = "<group>"; };
-		DAD371680F0280EF0064AFF4 /* port.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = port.c; sourceTree = "<group>"; };
+		DAB2118D107B33AB002E931E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
 		DAD3716D0F0280EF0064AFF4 /* MPPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPort.h; sourceTree = "<group>"; };
 		DAD3716E0F0280EF0064AFF4 /* MPPort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPPort.c; sourceTree = "<group>"; };
 		FD1CD53B1018F5AD0071534F /* variables.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = variables.plist; sourceTree = "<group>"; };
@@ -52,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DD76F9C0486AA7600D96B5E /* CoreFoundation.framework in Frameworks */,
+				DAB2118E107B33AB002E931E /* Foundation.framework in Frameworks */,
 				DA382EF0105A2B4900D9B600 /* Tcl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,7 +75,7 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				DAD371680F0280EF0064AFF4 /* port.c */,
+				DAD371680F0280EF0064AFF4 /* port.m */,
 				DA96BECE0F7C9C2500362779 /* MPIndex.h */,
 				DA96BECF0F7C9C2500362779 /* MPIndex.c */,
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
@@ -94,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				08FB779EFE84155DC02AAC07 /* CoreFoundation.framework */,
+				DAB2118D107B33AB002E931E /* Foundation.framework */,
 				DA382EEF105A2B4900D9B600 /* Tcl.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -157,7 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAD371710F0280EF0064AFF4 /* port.c in Sources */,
+				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
 				DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */,
 				DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */,
 				DA13887B101AED7000F73A82 /* MPConfig.c in Sources */,
