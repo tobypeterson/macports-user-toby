@@ -314,7 +314,7 @@ find_next(port_context_t portctx)
 				if (!skip) {
 					CFArrayAppendValue(portctx->working, context.info);
 					result = CFStringCreateCopy(NULL, context.info);
-					*stop = 1;
+					*stop = TRUE;
 				}
 			}
 		);

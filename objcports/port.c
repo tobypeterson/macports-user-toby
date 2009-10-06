@@ -3,7 +3,7 @@
 #include "MPConfig.h"
 #include "MPIndex.h"
 #include "MPPort.h"
-#include "internal.h"
+#include "internal.h" // TODO: export "MPCFUtils"?
 
 static void
 do_showconfig()
