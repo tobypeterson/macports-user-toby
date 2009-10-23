@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DA13887B101AED7000F73A82 /* MPConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = DA13887A101AED7000F73A82 /* MPConfig.c */; };
+		DA13887B101AED7000F73A82 /* MPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = DA13887A101AED7000F73A82 /* MPConfig.m */; };
 		DA382DE5105A284E00D9B600 /* cftcl.c in Sources */ = {isa = PBXBuildFile; fileRef = DA382DE4105A284E00D9B600 /* cftcl.c */; };
 		DA382EF0105A2B4900D9B600 /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA382EEF105A2B4900D9B600 /* Tcl.framework */; };
 		DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = DA7AF1BB1058D1E200CF2187 /* internal.c */; };
@@ -33,7 +33,7 @@
 		08FB779EFE84155DC02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		8DD76FA10486AA7600D96B5E /* port */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = port; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA138879101AED7000F73A82 /* MPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPConfig.h; sourceTree = "<group>"; };
-		DA13887A101AED7000F73A82 /* MPConfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPConfig.c; sourceTree = "<group>"; };
+		DA13887A101AED7000F73A82 /* MPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPConfig.m; sourceTree = "<group>"; };
 		DA382DE3105A284E00D9B600 /* cftcl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cftcl.h; sourceTree = "<group>"; };
 		DA382DE4105A284E00D9B600 /* cftcl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cftcl.c; sourceTree = "<group>"; };
 		DA382EEF105A2B4900D9B600 /* Tcl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Tcl.framework; path = /System/Library/Frameworks/Tcl.framework; sourceTree = "<absolute>"; };
@@ -81,7 +81,7 @@
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
 				DAD3716E0F0280EF0064AFF4 /* MPPort.c */,
 				DA138879101AED7000F73A82 /* MPConfig.h */,
-				DA13887A101AED7000F73A82 /* MPConfig.c */,
+				DA13887A101AED7000F73A82 /* MPConfig.m */,
 				DA7AF1BA1058D1E200CF2187 /* internal.h */,
 				DA7AF1BB1058D1E200CF2187 /* internal.c */,
 				DA382DE3105A284E00D9B600 /* cftcl.h */,
@@ -162,7 +162,7 @@
 				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
 				DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */,
 				DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */,
-				DA13887B101AED7000F73A82 /* MPConfig.c in Sources */,
+				DA13887B101AED7000F73A82 /* MPConfig.m in Sources */,
 				DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */,
 				DA382DE5105A284E00D9B600 /* cftcl.c in Sources */,
 			);

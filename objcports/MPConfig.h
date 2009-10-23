@@ -1,1 +1,1 @@
-CFDictionaryRef MPCopyConfig(void);
+NSDictionary *MPCopyConfig(void);
