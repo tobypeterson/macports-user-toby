@@ -2,53 +2,35 @@
 #include <tcl.h>
 
 #include "MPConfig.h"
-#include "internal.h"
-
-static void
-load_autoconf(NSMutableDictionary *config)
-{
-	Tcl_Interp *interp;
-	int rc;
-	CFStringRef tmp;
-	
-	interp = Tcl_CreateInterp(); 
-	rc = Tcl_EvalFile(interp, "/Library/Tcl/macports1.0/macports_autoconf.tcl");
-	if (rc == 0) {
-		tmp = CFStringCreateWithCString(NULL, Tcl_GetVar(interp, "macports::autoconf::macports_conf_path", 0), kCFStringEncodingUTF8);
-		if (tmp) {
-			[config setObject:(NSString *)tmp forKey:@"macports_conf_path"];
-			CFRelease(tmp);
-		}
-
-		tmp = CFStringCreateWithCString(NULL, Tcl_GetVar(interp, "macports::autoconf::macports_user_dir", 0), kCFStringEncodingUTF8);
-		if (tmp) {
-			[config setObject:(NSString *)tmp forKey:@"macports_user_dir"];
-			CFRelease(tmp);
-		}
-	}
-	Tcl_DeleteInterp(interp);
-}
 
 NSDictionary *
 MPCopyConfig()
 {
+	Tcl_Interp *interp;
 	NSAutoreleasePool *pool;
 	NSMutableDictionary *config;
 	NSMutableArray *configFiles;
 	char *s;
 
-	config = [[NSMutableDictionary alloc] initWithCapacity:0];
-	
 	pool = [NSAutoreleasePool new];
-	
-	load_autoconf(config);
 
 	configFiles = [NSMutableArray arrayWithCapacity:3];
-	[configFiles addObject:[[[config objectForKey:@"macports_conf_path"] stringByAppendingPathComponent:@"macports.conf"] stringByStandardizingPath]];
-	[configFiles addObject:[[[config objectForKey:@"macports_user_dir"] stringByAppendingPathComponent:@"macports.conf"] stringByStandardizingPath]];
+
+	interp = Tcl_CreateInterp(); 
+	if (interp && Tcl_EvalFile(interp, "/Library/Tcl/macports1.0/macports_autoconf.tcl") == TCL_OK) {
+		NSString *tmp;
+		tmp = [NSString stringWithUTF8String:Tcl_GetVar(interp, "macports::autoconf::macports_conf_path", 0)];
+		[configFiles addObject:[[tmp stringByAppendingPathComponent:@"macports.conf"] stringByStandardizingPath]];
+		tmp = [NSString stringWithUTF8String:Tcl_GetVar(interp, "macports::autoconf::macports_user_dir", 0)];
+		[configFiles addObject:[[tmp stringByAppendingPathComponent:@"macports.conf"] stringByStandardizingPath]];
+	}
+	Tcl_DeleteInterp(interp);
+
 	if ((s = getenv("PORTSRC"))) {
 		[configFiles addObject:[[NSString stringWithUTF8String:s] stringByStandardizingPath]];
 	}
+
+	config = [[NSMutableDictionary alloc] initWithCapacity:0];
 
 	for (NSString *configFile in configFiles) {
 		NSString *file = [NSString stringWithContentsOfFile:configFile encoding:NSUTF8StringEncoding error:NULL];
