@@ -19,12 +19,12 @@ do_showconfig()
 static void
 do_showindex(char *f)
 {
-	NSDictionary *index;
+	NSDictionary *dict;
 
-	index = (NSDictionary *)MPCopyPortIndex((CFStringRef)[NSString stringWithUTF8String:f]);
-	if (index) {
-		NSLog(@"%@", index);
-		[index release];
+	dict = (NSDictionary *)MPCopyPortIndex((CFStringRef)[NSString stringWithUTF8String:f]);
+	if (dict) {
+		NSLog(@"%@", dict);
+		[dict release];
 	}
 }
 

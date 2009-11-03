@@ -98,7 +98,7 @@ _copy_variable_info(void)
 }
 
 mp_port_t
-mp_port_create(CFURLRef url, CFDictionaryRef options)
+mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 {
 	mp_port_t port;
 
@@ -299,7 +299,7 @@ mp_port_portfile(mp_port_t port)
 }
 
 CFArrayRef
-mp_port_targets(mp_port_t port)
+mp_port_targets(mp_port_t port __unused)
 {
 	CFMutableArrayRef results;
 
@@ -622,7 +622,7 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 //
 
 static int
-command_trampoline(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+command_trampoline(ClientData clientData, Tcl_Interp *interp __unused, int objc, Tcl_Obj *const objv[])
 {
 	CFArrayRef args = CFArrayCreateWithTclObjects(NULL, objv, objc);
 	mp_port_perform_command(clientData, args);
@@ -651,7 +651,7 @@ command_create_cf(Tcl_Interp *interp, CFStringRef cmdName, ClientData clientData
 }
 
 static char *
-variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags)
+variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, const char *name2, int flags __unused)
 {
 	CFStringRef tmp, var;
 	char *s;
@@ -673,7 +673,7 @@ variable_read(ClientData clientData, Tcl_Interp *interp, const char *name1, cons
 
 // debugging
 static int
-_nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+_nslog(ClientData clientData __unused, Tcl_Interp *interp __unused, int objc, Tcl_Obj *const objv[])
 {
 	CFArrayRef args;
 	CFStringRef str;
@@ -692,7 +692,7 @@ _nslog(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[
 }
 
 static int
-_fake_boolean(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *const objv[])
+_fake_boolean(ClientData clientData __unused, Tcl_Interp *interp, int objc __unused, Tcl_Obj *const objv[] __unused)
 {
 	Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
 	return TCL_OK;

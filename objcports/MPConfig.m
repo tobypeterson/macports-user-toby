@@ -34,7 +34,7 @@ MPCopyConfig()
 
 	for (NSString *configFile in configFiles) {
 		NSString *file = [NSString stringWithContentsOfFile:configFile encoding:NSUTF8StringEncoding error:NULL];
-		[file enumerateLinesUsingBlock:^(NSString *line, BOOL *stop) {
+		[file enumerateLinesUsingBlock:^(NSString *line, BOOL *stop __unused) {
 			if ([line rangeOfCharacterFromSet:[NSCharacterSet lowercaseLetterCharacterSet]].location == 0) {
 				NSString *key, *obj;
 				NSRange ws;
