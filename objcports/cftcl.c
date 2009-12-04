@@ -15,7 +15,7 @@ CFArrayCreateWithTclObjects(CFAllocatorRef allocator, Tcl_Obj * const *objects, 
 	CFIndex i;
 	CFStringRef array[count];
 	CFArrayRef result;
-	
+
 	for (i = 0; i < count; i++) {
 		array[i] = CFStringCreateWithTclObject(allocator, objects[i]);
 	}
@@ -31,13 +31,13 @@ CFDictionaryCreateWithTclObjects(CFAllocatorRef allocator, Tcl_Obj **objects, CF
 {
 	CFIndex count2, i;
 	CFDictionaryRef result;
-	
+
 	if ((count % 2) != 0) {
 		return NULL;
 	}
-	
+
 	count2 = count / 2;
-	
+
 	CFStringRef keys[count2];
 	CFStringRef values[count2];
 	for (i = 0; i < count2; i++) {

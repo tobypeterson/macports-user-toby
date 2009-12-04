@@ -9,13 +9,13 @@
 
 struct mp_port_s {
 	CFURLRef _url;
-	
+
 	CFMutableDictionaryRef _variableInfo;
 	CFMutableDictionaryRef _variables;
-	
+
 	CFMutableArrayRef _platforms;
 	CFMutableDictionaryRef _variants;
-	
+
 	Tcl_Interp *_interp;
 };
 
@@ -139,10 +139,10 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 		CFArrayRef tmparr;
 
 		Tcl_Preserve(port->_interp);
-		
+
 		Tcl_CreateObjCommand(port->_interp, "nslog", _nslog, NULL, NULL); // XXX: debugging
 		//Tcl_Eval(_interp, "nslog [info commands]");
-		
+
 		command_create(port->_interp, "PortSystem", port);
 		command_create(port->_interp, "PortGroup", port);
 		command_create(port->_interp, "platform", port);
@@ -183,7 +183,7 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 			CFRelease(tmp);
 		});
 		CFRelease(tmparr);
-		
+
 		tmparr = mp_port_variables(port);
 		CFArrayApplyBlock2(tmparr, ^(const void *var) {
 			char *s = strdup_cf(var);
@@ -191,7 +191,7 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 			free(s);
 		});
 		CFRelease(tmparr);
-		
+
 		// bogus targets
 		Tcl_CreateObjCommand(port->_interp, "pre-activate", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "post-activate", _nslog, NULL, NULL); // XXX: debugging
@@ -204,7 +204,7 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 		Tcl_CreateObjCommand(port->_interp, "activate", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "unarchive", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "post-clean", _nslog, NULL, NULL); // XXX: debugging
-		
+
 		// functions we need to provide (?)
 		Tcl_CreateObjCommand(port->_interp, "variant_isset", _fake_boolean, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "variant_set", _fake_boolean, NULL, NULL); // XXX: debugging
@@ -212,10 +212,10 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 		Tcl_CreateObjCommand(port->_interp, "strsed", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "suffix", _nslog, NULL, NULL); // XXX: debugging
 		Tcl_CreateObjCommand(port->_interp, "include", _nslog, NULL, NULL); // XXX: debugging
-		
+
 		// variables that should be constant
 		Tcl_CreateObjCommand(port->_interp, "prefix", _nslog, NULL, NULL);
-		
+
 		CFStringRef pf = mp_port_portfile(port);
 		char *s = strdup_cf(pf);
 		if (Tcl_EvalFile(port->_interp, s) != TCL_OK) {
@@ -224,10 +224,10 @@ mp_port_create(CFURLRef url, CFDictionaryRef options __unused)
 		}
 		free(s);
 		CFRelease(pf);
-		
+
 		Tcl_Release(port->_interp);
 	} while (0);
-	
+
 	return port;
 }
 
@@ -235,13 +235,13 @@ void
 mp_port_destroy(mp_port_t port)
 {
 	CFRelease(port->_url);
-	
+
 	CFRelease(port->_variableInfo);
 	CFRelease(port->_variables);
-	
+
 	CFRelease(port->_platforms);
 	CFRelease(port->_variants);
-	
+
 	Tcl_DeleteInterp(port->_interp);
 
 	free(port); // XXX
@@ -256,7 +256,7 @@ mp_port_variable(mp_port_t port, CFStringRef name)
 	CFTypeRef callback;
 	CFStringRef ret;
 	CFStringRef subst = NULL;
-	
+
 	info = CFDictionaryGetValue(port->_variableInfo, name);
 	if (info != NULL) {
 		if ((setValue = CFDictionaryGetValue(port->_variables, name))) {
@@ -462,29 +462,29 @@ mp_port_test_and_record_platform(mp_port_t port, CFArrayRef platform)
 	CFStringRef arch;
 	CFTypeRef tmp;
 	Boolean result = TRUE;
-	
+
 	CFArrayAppendValue(port->_platforms, platform);
-	
+
 	assert(uname(&u) == 0);
 	os = CFStringCreateWithCString(NULL, u.sysname, kCFStringEncodingUTF8);
 	release = CFStringCreateWithCString(NULL, u.release, kCFStringEncodingUTF8);
 	arch = CFStringCreateWithCString(NULL, u.machine, kCFStringEncodingUTF8);
-	
+
 	tmp = CFArrayGetValueAtIndex(platform, 0);
 	if (tmp != kCFNull && CFStringCompare(tmp, os, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
 		result = FALSE;
 	}
-	
+
 	tmp = CFArrayGetValueAtIndex(platform, 1);
 	if (tmp != kCFNull && CFStringCompare(tmp, release, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
 		result = FALSE;
 	}
-	
+
 	tmp = CFArrayGetValueAtIndex(platform, 2);
 	if (tmp != kCFNull && CFStringCompare(tmp, arch, kCFCompareCaseInsensitive) != kCFCompareEqualTo) {
 		result = FALSE;
 	}
-	
+
 	CFRelease(os);
 	CFRelease(release);
 	CFRelease(arch);
@@ -498,10 +498,10 @@ mp_port_defined_variants(mp_port_t port)
 	CFIndex count = CFDictionaryGetCount(port->_variants);
 	const void *keys[count];
 	CFArrayRef vars;
-	
+
 	CFDictionaryGetKeysAndValues(port->_variants, keys, NULL);
 	vars = CFArrayCreate(NULL, keys, count, &kCFTypeArrayCallBacks);
-	
+
 	return vars;
 }
 
@@ -534,14 +534,14 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 		CFStringRef os = NULL;
 		CFTypeRef release = kCFNull;
 		CFTypeRef arch = kCFNull;
-		
+
 		if (count < 3 || count > 5) {
 			fprintf(stderr, "bogus platform declaration\n");
 			return;
 		}
-		
+
 		os = CFArrayGetValueAtIndex(args, 1);
-		
+
 		if (count == 4) {
 			SInt32 rel = CFStringGetIntValue(CFArrayGetValueAtIndex(args, 2));
 			if (rel != 0) {
@@ -554,7 +554,7 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 			release = CFNumberCreate(NULL, kCFNumberIntType, &rel);
 			arch = CFArrayGetValueAtIndex(args, 3);
 		}
-		
+
 		CFMutableArrayRef platform = CFArrayCreateMutable(NULL, 3, &kCFTypeArrayCallBacks);
 		CFArrayAppendValue(platform, os);
 		CFArrayAppendValue(platform, release);
@@ -571,21 +571,21 @@ mp_port_perform_command(mp_port_t port, CFArrayRef args)
 		CFStringRef name;
 		CFMutableDictionaryRef props;
 		CFIndex i;
-		
+
 		// variant name [a b c d] {}
 		if (count < 3) {
 			fprintf(stderr, "bogus variant declaration\n");
 			return;
 		}
-		
+
 		name = CFArrayGetValueAtIndex(args, 1);
-		
+
 		// this isn't quite right, conflicts can take multiple "arguments"
 		props = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
- 		for (i = 2; i < count - 1; i += 2) {
+		for (i = 2; i < count - 1; i += 2) {
 			CFDictionarySetValue(props, CFArrayGetValueAtIndex(args, i), CFArrayGetValueAtIndex(args, i + 1));
 		}
-		
+
 		if (mp_port_test_and_record_variant(port, name, props)) {
 			char *s = strdup_cf(CFArrayGetValueAtIndex(args, count - 1));
 			Tcl_Eval(port->_interp, s);
@@ -627,7 +627,7 @@ command_trampoline(ClientData clientData, Tcl_Interp *interp __unused, int objc,
 	CFArrayRef args = CFArrayCreateWithTclObjects(NULL, objv, objc);
 	mp_port_perform_command(clientData, args);
 	CFRelease(args);
-	
+
 	return TCL_OK;
 }
 
@@ -687,7 +687,7 @@ _nslog(ClientData clientData __unused, Tcl_Interp *interp __unused, int objc, Tc
 		}
 		CFRelease(args);
 	}
-	
+
 	return TCL_OK;
 }
 
