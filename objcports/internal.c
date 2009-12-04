@@ -6,12 +6,11 @@
 char *
 strdup_cf(CFStringRef str)
 {
-	CFIndex length, size;
+	CFIndex size;
 	char *result;
 
-	length = CFStringGetLength(str);
-	size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-	result = calloc(size, sizeof(char));
+	size = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8) + 1;
+	result = malloc(size);
 	if (result) {
 		if (!CFStringGetCString(str, result, size, kCFStringEncodingUTF8)) {
 			free(result);
@@ -30,7 +29,7 @@ fprintf_cf(FILE *stream, const char *format, ...)
 	int rc;
 
 	formatstr = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
-	
+
 	va_start(ap, format);
 	str = CFStringCreateWithFormatAndArguments(NULL, NULL, formatstr, ap);
 	va_end(ap);
