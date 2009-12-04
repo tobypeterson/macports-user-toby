@@ -16,7 +16,7 @@ MPCopyConfig()
 
 	configFiles = [NSMutableArray arrayWithCapacity:3];
 
-	interp = Tcl_CreateInterp(); 
+	interp = Tcl_CreateInterp();
 	if (interp && Tcl_EvalFile(interp, "/Library/Tcl/macports1.0/macports_autoconf.tcl") == TCL_OK) {
 		NSString *tmp;
 		tmp = [NSString stringWithUTF8String:Tcl_GetVar(interp, "macports::autoconf::macports_conf_path", 0)];

@@ -41,7 +41,7 @@ do_info(int argc, char *argv[])
 		url = [NSURL fileURLWithPath:path isDirectory:YES];
 		port = mp_port_create((CFURLRef)url, NULL);
 
- 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"name") autorelease];
+		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"name") autorelease];
 		tmp2 = [(id)mp_port_variable(port, (CFStringRef)@"version") autorelease];
 		tmp3 = [(id)mp_port_variable(port, (CFStringRef)@"categories") autorelease];
 		fprintf(stdout, "%s @%s (%s)\n", [tmp1 UTF8String], [tmp2 UTF8String], [tmp3 UTF8String]);
@@ -58,7 +58,7 @@ do_info(int argc, char *argv[])
 
 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"long_description") autorelease];
 		fprintf(stdout, "Description:          %s\n", [tmp1 UTF8String]);
-		
+
 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"homepage") autorelease];
 		fprintf(stdout, "Homepage:             %s\n", [tmp1 UTF8String]);
 
@@ -66,10 +66,10 @@ do_info(int argc, char *argv[])
 
 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"depends_build") autorelease];
 		fprintf(stdout, "Build Dependencies:   %s\n", [tmp1 UTF8String]);
-		
+
 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"depends_lib") autorelease];
 		fprintf(stdout, "Library Dependencies: %s\n", [tmp1 UTF8String]);
-		
+
 		tmp1 = [(id)mp_port_variable(port, (CFStringRef)@"platforms") autorelease];
 		fprintf(stdout, "Platforms:            %s\n", [tmp1 UTF8String]);
 
