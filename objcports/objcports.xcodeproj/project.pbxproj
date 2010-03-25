@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA03DF48115B11A90036231B /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DA03DF47115B11A90036231B /* libcurl.dylib */; };
 		DA13887B101AED7000F73A82 /* MPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = DA13887A101AED7000F73A82 /* MPConfig.m */; };
 		DA382DE5105A284E00D9B600 /* cftcl.c in Sources */ = {isa = PBXBuildFile; fileRef = DA382DE4105A284E00D9B600 /* cftcl.c */; };
 		DA382EF0105A2B4900D9B600 /* Tcl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA382EEF105A2B4900D9B600 /* Tcl.framework */; };
 		DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */ = {isa = PBXBuildFile; fileRef = DA7AF1BB1058D1E200CF2187 /* internal.c */; };
-		DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.c */; };
+		DA96BED00F7C9C2500362779 /* MPIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = DA96BECF0F7C9C2500362779 /* MPIndex.m */; };
 		DAB2118E107B33AB002E931E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2118D107B33AB002E931E /* Foundation.framework */; };
 		DAD371710F0280EF0064AFF4 /* port.m in Sources */ = {isa = PBXBuildFile; fileRef = DAD371680F0280EF0064AFF4 /* port.m */; };
 		DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */ = {isa = PBXBuildFile; fileRef = DAD3716E0F0280EF0064AFF4 /* MPPort.c */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		08FB779EFE84155DC02AAC07 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		8DD76FA10486AA7600D96B5E /* port */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = port; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA03DF47115B11A90036231B /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = /usr/lib/libcurl.dylib; sourceTree = "<absolute>"; };
 		DA138879101AED7000F73A82 /* MPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPConfig.h; sourceTree = "<group>"; };
 		DA13887A101AED7000F73A82 /* MPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPConfig.m; sourceTree = "<group>"; };
 		DA382DE3105A284E00D9B600 /* cftcl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cftcl.h; sourceTree = "<group>"; };
@@ -40,7 +42,7 @@
 		DA7AF1BA1058D1E200CF2187 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		DA7AF1BB1058D1E200CF2187 /* internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = internal.c; sourceTree = "<group>"; };
 		DA96BECE0F7C9C2500362779 /* MPIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPIndex.h; sourceTree = "<group>"; };
-		DA96BECF0F7C9C2500362779 /* MPIndex.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPIndex.c; sourceTree = "<group>"; };
+		DA96BECF0F7C9C2500362779 /* MPIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPIndex.m; sourceTree = "<group>"; };
 		DAB2118D107B33AB002E931E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		DAD371680F0280EF0064AFF4 /* port.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = port.m; sourceTree = "<group>"; };
 		DAD3716D0F0280EF0064AFF4 /* MPPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPPort.h; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 			files = (
 				DAB2118E107B33AB002E931E /* Foundation.framework in Frameworks */,
 				DA382EF0105A2B4900D9B600 /* Tcl.framework in Frameworks */,
+				DA03DF48115B11A90036231B /* libcurl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +71,7 @@
 				C6859EA2029092E104C91782 /* Documentation */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				DA03DF47115B11A90036231B /* libcurl.dylib */,
 			);
 			name = objcports;
 			sourceTree = "<group>";
@@ -77,7 +81,7 @@
 			children = (
 				DAD371680F0280EF0064AFF4 /* port.m */,
 				DA96BECE0F7C9C2500362779 /* MPIndex.h */,
-				DA96BECF0F7C9C2500362779 /* MPIndex.c */,
+				DA96BECF0F7C9C2500362779 /* MPIndex.m */,
 				DAD3716D0F0280EF0064AFF4 /* MPPort.h */,
 				DAD3716E0F0280EF0064AFF4 /* MPPort.c */,
 				DA138879101AED7000F73A82 /* MPConfig.h */,
@@ -160,7 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAD371710F0280EF0064AFF4 /* port.m in Sources */,
-				DA96BED00F7C9C2500362779 /* MPIndex.c in Sources */,
+				DA96BED00F7C9C2500362779 /* MPIndex.m in Sources */,
 				DAD371740F0280EF0064AFF4 /* MPPort.c in Sources */,
 				DA13887B101AED7000F73A82 /* MPConfig.m in Sources */,
 				DA7AF1BC1058D1E200CF2187 /* internal.c in Sources */,

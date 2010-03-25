@@ -19,12 +19,16 @@ do_showconfig()
 static void
 do_showindex(char *f)
 {
-	NSDictionary *dict;
+	NSURL *url;
+	MPIndex *portindex;
 
-	dict = (NSDictionary *)MPCopyPortIndex((CFStringRef)[NSString stringWithUTF8String:f]);
-	if (dict) {
-		NSLog(@"%@", dict);
-		[dict release];
+	url = [NSURL URLWithString:[NSString stringWithUTF8String:f]];
+	if (url) {
+		portindex = [[MPIndex alloc] initWithSourceURL:url];
+		if (portindex) {
+			NSLog(@"%@", portindex);
+			[portindex release];
+		}
 	}
 }
 
