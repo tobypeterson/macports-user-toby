@@ -73,7 +73,7 @@ Tcl_CreateNSDataChannel(NSData *data)
 		ctx = malloc(sizeof(*ctx));
 		ctx->data = [data retain];
 		ctx->offset = 0;
-		
+
 		asprintf(&channel_name, "%p", data);
 		channel = Tcl_CreateChannel(&NSDataChannelType, channel_name, ctx, TCL_READABLE);
 		free(channel_name);
