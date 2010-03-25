@@ -21,14 +21,17 @@ dataclose(ClientData instanceData, Tcl_Interp *interp)
 }
 
 static int
-datainput(ClientData instanceData, char *buf, int bufSize, int *errorCodePtr)
+datainput(ClientData instanceData, char *buf, int bufSize, int *errorCodePtr __unused)
 {
 	struct NSData_channel_ctx *ctx = (struct NSData_channel_ctx *)instanceData;
 	size_t bytes;
 
-	bytes = MIN([ctx->data length] - ctx->offset, bufSize);
+	bytes = [ctx->data length] - ctx->offset;
+	if ((size_t)bufSize < bytes) {
+		bytes = bufSize;
+	}
 
-	memcpy(buf, [ctx->data bytes] + ctx->offset, bytes);
+	memcpy(buf, (char *)[ctx->data bytes] + ctx->offset, bytes);
 	ctx->offset += bytes;
 
 	return (int)bytes;
