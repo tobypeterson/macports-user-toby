@@ -26,7 +26,7 @@ do_showindex(char *f)
 	if (url) {
 		portindex = [[MPIndex alloc] initWithSourceURL:url];
 		if (portindex) {
-			NSLog(@"%@", portindex);
+			NSLog(@"%@", [portindex index]);
 			[portindex release];
 		}
 	}

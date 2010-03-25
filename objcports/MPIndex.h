@@ -4,5 +4,6 @@
 }
 
 - (id)initWithSourceURL:(NSURL *)source;
+- (NSDictionary *)index;
 
 @end
